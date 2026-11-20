@@ -1,0 +1,19 @@
+{
+  "name": "lc-guide-vue",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LC-Guide® 导航式液相色谱操作工作站 — 融合 AB SCIEX Cliquid 双层任务向导与 Open Claude UI (CDS) 温润设计体系的 Vue 3 + Vite 前端工程",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.2.0"
+  }
+}

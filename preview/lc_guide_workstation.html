@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LC-Guide® — 液相色谱例行分析软件</title>
+<style>
+  /* ========================================================================
+     LC-Guide® — AB SCIEX Cliquid Guided Workflow × Open Claude UI (CDS)
+     Editorial Warmth · 4-Layer Surfaces · Clay (#c6613f) + Accent (#184f95)
+     Single-Stroke Hairlines · 7-Stop Scroll Fade · Light / Dark Dual Mode
+     ======================================================================== */
+  :root {
+    --cds-surface-0: #f9f9f7;
+    --cds-surface-1: #f4f3ef;
+    --cds-surface-2: #ffffff;
+    --cds-surface-3: #efeee9;
+    --cds-surface-hover: rgba(20, 20, 19, 0.045);
+    --cds-surface-active: rgba(20, 20, 19, 0.08);
+    --cds-surface-popover: #ffffff;
+
+    --cds-text-primary: #141413;
+    --cds-text-secondary: #52514e;
+    --cds-text-muted: #898781;
+
+    --brand: #c6613f;
+    --brand-hover: #b55433;
+    --cds-clay: #d97757;
+    --cds-clay-soft: rgba(217, 119, 87, 0.12);
+    --cds-clay-border: rgba(217, 119, 87, 0.34);
+
+    --cds-text-accent: #184f95;
+    --cds-accent-soft: rgba(24, 79, 149, 0.09);
+    --cds-border-accent: #86b6ef;
+    --cds-focus-shadow: 0 0 0 1px var(--cds-surface-2), 0 0 0 2.5px rgba(24, 79, 149, 0.28);
+
+    --cds-border-subtle: rgba(20, 20, 19, 0.08);
+    --cds-border-strong: rgba(20, 20, 19, 0.15);
+
+    --cds-success: #1f7a53;
+    --cds-success-bg: rgba(31, 122, 83, 0.1);
+    --cds-warning: #a86414;
+    --cds-warning-bg: rgba(168, 100, 20, 0.11);
+    --cds-danger: #bf3b42;
+    --cds-danger-bg: rgba(191, 59, 66, 0.1);
+
+    --cds-radius-xs: 4px;
+    --cds-radius-sm: 6px;
+    --cds-radius-md: 8px;
+    --cds-radius-panel: 10px;
+    --cds-radius-card: 12px;
+    --cds-radius-dialog: 16px;
+    --cds-radius-pill: 9999px;
+
+    --cds-shadow-card: 0 1px 2px rgba(20, 20, 19, 0.04), 0 0 0 0.5px rgba(20, 20, 19, 0.05);
+    --cds-shadow-popover: 0 0 0 0.5px rgba(20, 20, 19, 0.09), 0 12px 32px -4px rgba(20, 20, 19, 0.14);
+    --cds-shadow-pill: 0 1px 2px rgba(20, 20, 19, 0.08);
+
+    --cds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --cds-ease-snap: cubic-bezier(0.22, 1, 0.36, 1);
+    --cds-font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', 'Segoe UI', Roboto, sans-serif;
+    --cds-font-serif: Georgia, 'Songti SC', 'Noto Serif SC', 'STSong', serif;
+    --cds-font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  }
+
+  .dark {
+    --cds-surface-0: #0e0e0d;
+    --cds-surface-1: #161615;
+    --cds-surface-2: #1c1c1a;
+    --cds-surface-3: #242422;
+    --cds-surface-hover: rgba(255, 255, 255, 0.055);
+    --cds-surface-active: rgba(255, 255, 255, 0.095);
+    --cds-surface-popover: #262624;
+
+    --cds-text-primary: #f0efec;
+    --cds-text-secondary: #b9b7ae;
+    --cds-text-muted: #898781;
+
+    --brand: #cc6b49;
+    --brand-hover: #da7a58;
+    --cds-clay: #cc6b49;
+    --cds-clay-soft: rgba(204, 107, 73, 0.16);
+    --cds-clay-border: rgba(204, 107, 73, 0.36);
+
+    --cds-text-accent: #7ab0f2;
+    --cds-accent-soft: rgba(122, 176, 242, 0.13);
+    --cds-border-accent: #6da7ec;
+    --cds-focus-shadow: 0 0 0 1px var(--cds-surface-2), 0 0 0 2.5px rgba(109, 167, 236, 0.34);
+
+    --cds-border-subtle: rgba(255, 255, 255, 0.085);
+    --cds-border-strong: rgba(255, 255, 255, 0.16);
+
+    --cds-success: #45b984;
+    --cds-success-bg: rgba(69, 185, 132, 0.14);
+    --cds-warning: #e5a347;
+    --cds-warning-bg: rgba(229, 163, 71, 0.15);
+    --cds-danger: #e46b71;
+    --cds-danger-bg: rgba(228, 107, 113, 0.15);
+
+    --cds-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+    --cds-shadow-popover: 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 16px 36px -4px rgba(0, 0, 0, 0.52);
+    --cds-shadow-pill: 0 1px 3px rgba(0, 0, 0, 0.32);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--cds-surface-0);
+    color: var(--cds-text-primary);
+    font-family: var(--cds-font-sans);
+    font-size: 14px; line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: var(--cds-font-mono); font-variant-numeric: tabular-nums; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .editorial { font-family: var(--cds-font-serif); letter-spacing: -0.015em; }
+
+  @keyframes cds-breathe {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.88); }
+  }
+  @keyframes cds-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(217, 119, 87, 0.48); }
+    70% { box-shadow: 0 0 0 6px rgba(217, 119, 87, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(217, 119, 87, 0); }
+  }
+  .dot-breathe { animation: cds-breathe 2.4s var(--cds-ease-out) infinite; }
+  .dot-pulse { animation: cds-pulse 1.2s var(--cds-ease-out) infinite; }
+
+  /* Shell */
+  .shell {
+    display: grid;
+    grid-template-columns: 288px minmax(0, 1fr);
+    height: 100vh;
+    overflow: hidden;
+    background: var(--cds-surface-0);
+  }
+
+  /* Left Guided Navigator */
+  .nav-rail {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--cds-surface-1);
+    border-right: 1px solid var(--cds-border-subtle);
+    overflow: hidden;
+    user-select: none;
+  }
+  .nav-header {
+    padding: 15px 17px 13px;
+    border-bottom: 1px solid var(--cds-border-subtle);
+  }
+  .nav-brand-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 13px;
+  }
+  .brand-btn {
+    display: inline-flex; align-items: center; gap: 9px; border: none; background: transparent;
+    color: var(--cds-text-primary); cursor: pointer; padding: 0; text-align: left;
+  }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: var(--cds-radius-md);
+    background: var(--cds-clay-soft); color: var(--brand);
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .brand-name { font-size: 13.5px; font-weight: 700; display: block; line-height: 1.15; }
+  .brand-sub { font-size: 11px; color: var(--cds-text-muted); display: block; margin-top: 2px; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: var(--cds-radius-md); border: none; background: transparent;
+    color: var(--cds-text-secondary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: background-color 150ms var(--cds-ease-out), transform 90ms var(--cds-ease-snap);
+  }
+  .icon-btn:hover { background: var(--cds-surface-hover); color: var(--cds-text-primary); }
+  .icon-btn:active { transform: scale(0.95); }
+
+  .nav-hero-kicker { font-size: 12px; color: var(--cds-text-muted); display: block; }
+  .nav-hero-title { font-size: 22px; font-weight: 600; color: var(--cds-text-primary); line-height: 1.25; }
+  .nav-back {
+    display: inline-flex; align-items: center; gap: 4px; border: none; background: transparent;
+    color: var(--cds-text-accent); font-size: 12px; font-weight: 500; padding: 2px 0; margin-bottom: 3px; cursor: pointer;
+  }
+  .nav-back:hover { opacity: 0.78; }
+
+  /* 7-Stop Non-Linear Scroll Fade Mask */
+  .scroll-fade {
+    --f-top: 12px; --f-bot: 16px;
+    -webkit-mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,0.05) calc(var(--f-top)*0.15), rgba(0,0,0,0.18) calc(var(--f-top)*0.32),
+      rgba(0,0,0,0.38) calc(var(--f-top)*0.5), rgba(0,0,0,0.64) calc(var(--f-top)*0.68), rgba(0,0,0,0.88) calc(var(--f-top)*0.85),
+      #000 var(--f-top), #000 calc(100% - var(--f-bot)),
+      rgba(0,0,0,0.88) calc(100% - var(--f-bot)*0.85), rgba(0,0,0,0.64) calc(100% - var(--f-bot)*0.68),
+      rgba(0,0,0,0.38) calc(100% - var(--f-bot)*0.5), rgba(0,0,0,0.18) calc(100% - var(--f-bot)*0.32),
+      rgba(0,0,0,0.05) calc(100% - var(--f-bot)*0.15), transparent 100%);
+    mask-image: linear-gradient(to bottom,
+      transparent 0%, rgba(0,0,0,0.05) calc(var(--f-top)*0.15), rgba(0,0,0,0.18) calc(var(--f-top)*0.32),
+      rgba(0,0,0,0.38) calc(var(--f-top)*0.5), rgba(0,0,0,0.64) calc(var(--f-top)*0.68), rgba(0,0,0,0.88) calc(var(--f-top)*0.85),
+      #000 var(--f-top), #000 calc(100% - var(--f-bot)),
+      rgba(0,0,0,0.88) calc(100% - var(--f-bot)*0.85), rgba(0,0,0,0.64) calc(100% - var(--f-bot)*0.68),
+      rgba(0,0,0,0.38) calc(100% - var(--f-bot)*0.5), rgba(0,0,0,0.18) calc(100% - var(--f-bot)*0.32),
+      rgba(0,0,0,0.05) calc(100% - var(--f-bot)*0.15), transparent 100%);
+  }
+
+  .nav-scroll { flex: 1; overflow-y: auto; padding: 13px 11px 20px; }
+  .nav-group { margin-bottom: 16px; }
+  .nav-group-title {
+    margin: 0 0 5px 0; padding: 0 10px; font-size: 12px; font-weight: 600; color: var(--cds-text-muted);
+  }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 7.5px 10px; border-radius: var(--cds-radius-md);
+    color: var(--cds-text-secondary); font-size: 13.5px; cursor: pointer;
+    transition: background-color 150ms var(--cds-ease-out), color 150ms var(--cds-ease-out), transform 90ms var(--cds-ease-snap);
+  }
+  .nav-row:hover { background: var(--cds-surface-hover); color: var(--cds-text-primary); }
+  .nav-row:active { transform: scale(0.99); }
+  .nav-row.is-active { background: var(--cds-clay-soft); color: var(--brand); font-weight: 600; }
+  .nav-row-sub { padding: 9px 11px; font-size: 14px; }
+  .nav-label { display: inline-flex; align-items: center; gap: 5px; }
+  .help-dot {
+    width: 19px; height: 19px; border-radius: 50%; border: none;
+    background: var(--cds-accent-soft); color: var(--cds-text-accent);
+    font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; opacity: 0.75;
+    transition: all 140ms var(--cds-ease-out);
+  }
+  .nav-row:hover .help-dot, .nav-row.is-active .help-dot { opacity: 1; }
+  .help-dot:hover { background: var(--cds-text-accent); color: #fff; transform: scale(1.07); }
+
+  .sub-callout {
+    margin: 16px 6px 0; padding: 11px 13px; border-radius: var(--cds-radius-panel);
+    background: var(--cds-surface-2); border: 1px solid var(--cds-border-subtle); font-size: 12px; color: var(--cds-text-secondary);
+  }
+  .sub-callout strong { display: block; color: var(--cds-text-primary); margin-bottom: 3px; }
+
+  .nav-footer {
+    padding: 11px 13px; border-top: 1px solid var(--cds-border-subtle);
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .op-meta { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .led { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--cds-success); }
+  .led.is-running { background: var(--cds-clay); }
+  .op-name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .op-sub { font-size: 11px; color: var(--cds-text-muted); }
+
+  /* Right Workspace */
+  .workspace-col { display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; }
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    padding: 10px 20px; border-bottom: 1px solid var(--cds-border-subtle); background: var(--cds-surface-0);
+  }
+  .segmented {
+    display: inline-flex; padding: 2px; border-radius: var(--cds-radius-pill); background: var(--cds-surface-3); gap: 2px;
+  }
+  .seg-btn {
+    border: none; background: transparent; color: var(--cds-text-secondary); font-family: inherit;
+    font-size: 12.5px; font-weight: 500; padding: 5px 12px; border-radius: var(--cds-radius-pill); cursor: pointer;
+    transition: all 150ms var(--cds-ease-out);
+  }
+  .seg-btn:hover { color: var(--cds-text-primary); }
+  .seg-btn.is-active { background: var(--cds-surface-2); color: var(--cds-text-primary); font-weight: 600; box-shadow: var(--cds-shadow-pill); }
+
+  .telemetry {
+    display: inline-flex; align-items: center; gap: 10px; padding: 4px 12px 4px 6px;
+    border-radius: var(--cds-radius-pill); background: var(--cds-surface-2); border: 1px solid var(--cds-border-subtle);
+    font-size: 12px; cursor: pointer;
+  }
+  .telemetry:hover { border-color: var(--cds-border-strong); }
+  .t-sep { width: 1px; height: 12px; background: var(--cds-border-subtle); }
+  .t-lbl { color: var(--cds-text-muted); margin-right: 3px; }
+  .t-unit { color: var(--cds-text-muted); font-size: 11px; margin-left: 2px; }
+
+  .ws-scroll { flex: 1; overflow-y: auto; padding: 18px 22px 36px; }
+  .ws-inner { max-width: 1080px; margin: 0 auto; }
+
+  /* Cards, Buttons, Tables, Badges */
+  .banner {
+    background: var(--cds-surface-2); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-card);
+    padding: 16px 20px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap; box-shadow: var(--cds-shadow-card);
+  }
+  .banner h1 { margin: 0; font-family: var(--cds-font-serif); font-size: 19px; font-weight: 600; }
+  .banner p { margin: 3px 0 0; font-size: 12.5px; color: var(--cds-text-secondary); }
+
+  .card {
+    background: var(--cds-surface-2); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-card);
+    padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--cds-shadow-card);
+  }
+  .card-title {
+    margin: 0 0 13px; font-size: 14.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 13px;
+    border-radius: var(--cds-radius-md); border: none; background: var(--cds-surface-3); color: var(--cds-text-primary);
+    font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    transition: background-color 150ms var(--cds-ease-out), transform 90ms var(--cds-ease-snap);
+  }
+  .btn:hover:not(:disabled) { background: var(--cds-surface-active); }
+  .btn:active:not(:disabled) { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--brand-hover); }
+  .btn-danger { background: var(--cds-danger-bg); color: var(--cds-danger); }
+  .btn-danger:hover:not(:disabled) { background: var(--cds-danger); color: #fff; }
+  .btn-sm { height: 26px; padding: 0 9px; font-size: 12px; border-radius: var(--cds-radius-sm); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: var(--cds-radius-pill);
+    font-size: 11.5px; font-weight: 500; white-space: nowrap;
+  }
+  .b-ready { background: var(--cds-success-bg); color: var(--cds-success); }
+  .b-run { background: var(--cds-clay-soft); color: var(--brand); }
+  .b-warn { background: var(--cds-warning-bg); color: var(--cds-warning); }
+  .b-muted { background: var(--cds-surface-3); color: var(--cds-text-secondary); }
+  .b-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; }
+
+  .metric {
+    background: var(--cds-surface-2); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-card);
+    padding: 14px 15px; box-shadow: var(--cds-shadow-card);
+  }
+  .metric-val { font-size: 22px; font-weight: 600; margin: 7px 0 4px; }
+  .hint { font-size: 12px; color: var(--cds-text-muted); }
+
+  .guide-card {
+    background: var(--cds-surface-1); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel);
+    padding: 15px; cursor: pointer; display: flex; flex-direction: column; gap: 6px;
+    transition: all 150ms var(--cds-ease-out);
+  }
+  .guide-card:hover { background: var(--cds-surface-2); border-color: var(--cds-border-strong); transform: translateY(-1px); }
+
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .label { font-size: 12.5px; font-weight: 500; }
+  .input, .select {
+    width: 100%; padding: 8px 11px; font-family: inherit; font-size: 13.5px;
+    color: var(--cds-text-primary); background: var(--cds-surface-0);
+    border: 1px solid var(--cds-border-strong); border-radius: var(--cds-radius-md); outline: none;
+  }
+  .input:focus, .select:focus { background: var(--cds-surface-2); border-color: var(--cds-border-accent); box-shadow: var(--cds-focus-shadow); }
+
+  .stepper {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 14px; padding: 7px 11px;
+    background: var(--cds-surface-1); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel); overflow-x: auto;
+  }
+  .step-item {
+    display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: var(--cds-radius-pill);
+    font-size: 12.5px; color: var(--cds-text-muted); cursor: pointer; white-space: nowrap;
+  }
+  .step-num {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--cds-surface-3); color: var(--cds-text-secondary);
+    font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .step-item.is-active { background: var(--cds-surface-2); color: var(--cds-text-primary); font-weight: 600; box-shadow: var(--cds-shadow-pill); }
+  .step-item.is-active .step-num { background: var(--brand); color: #fff; }
+  .step-item.is-done { color: var(--cds-success); }
+  .step-item.is-done .step-num { background: var(--cds-success); color: #fff; }
+
+  .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--cds-surface-1); color: var(--cds-text-secondary); font-size: 12px; font-weight: 600; text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--cds-border-subtle); white-space: nowrap; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--cds-border-subtle); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--cds-surface-hover); }
+  tbody tr.is-sel { background: var(--cds-clay-soft); }
+
+  .prompt-hero { background: var(--cds-surface-1); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel); padding: 18px 20px; }
+  .wiz-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--cds-border-subtle); }
+
+  /* Charts */
+  .chart-box { background: var(--cds-surface-1); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel); padding: 11px 13px 7px; }
+  .chart-svg { width: 100%; height: auto; display: block; }
+
+  /* Autosampler Tray */
+  .vial-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; }
+  .vial {
+    aspect-ratio: 1; border-radius: 50%; border: 1.5px solid var(--cds-border-subtle);
+    font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: transform 100ms var(--cds-ease-snap);
+  }
+  .vial:hover { transform: scale(1.06); }
+  .vial.is-sel { box-shadow: 0 0 0 2px var(--cds-surface-2), 0 0 0 4px var(--brand); }
+  .v-empty { background: var(--cds-surface-1); color: var(--cds-text-muted); }
+  .v-blank { background: var(--cds-surface-3); color: var(--cds-text-primary); }
+  .v-std { background: var(--cds-accent-soft); color: var(--cds-text-accent); border-color: var(--cds-border-accent); }
+  .v-qc { background: var(--cds-success-bg); color: var(--cds-success); }
+  .v-sample { background: var(--cds-clay-soft); color: var(--brand); border-color: var(--cds-clay-border); }
+
+  /* Flow Diagram */
+  .flow-row { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 4px 0; }
+  .flow-node { flex: 1; min-width: 120px; background: var(--cds-surface-1); border: 1px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel); padding: 11px 12px; }
+  .flow-node.hi { background: var(--cds-clay-soft); border-color: var(--cds-clay-border); }
+
+  /* Modal & Toast */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(20,20,19,0.42); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 18px; z-index: 100;
+  }
+  .dialog {
+    width: 100%; max-width: 450px; background: var(--cds-surface-popover);
+    border-radius: var(--cds-radius-dialog); box-shadow: var(--cds-shadow-popover); padding: 20px 22px;
+  }
+  .toast {
+    position: fixed; right: 20px; bottom: 20px; display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 15px; border-radius: var(--cds-radius-pill); background: var(--cds-surface-popover);
+    box-shadow: var(--cds-shadow-popover); font-size: 13px; font-weight: 500; z-index: 150;
+  }
+
+  .proj-opt {
+    background: var(--cds-surface-1); border: 1.5px solid var(--cds-border-subtle); border-radius: var(--cds-radius-panel);
+    padding: 13px 15px; cursor: pointer;
+  }
+  .proj-opt.is-sel { background: var(--cds-surface-2); border-color: var(--brand); box-shadow: 0 0 0 3px var(--cds-clay-soft); }
+
+  .progress-track { margin-top: 12px; height: 7px; border-radius: 999px; background: var(--cds-surface-3); overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--brand); transition: width 180ms var(--cds-ease-out); }
+
+  .mobile-btn { display: none; }
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .nav-rail { position: fixed; left: 0; top: 0; bottom: 0; width: 288px; transform: translateX(-100%); transition: transform 240ms var(--cds-ease-out); z-index: 60; box-shadow: var(--cds-shadow-popover); }
+    .nav-rail.open { transform: translateX(0); }
+    .mobile-btn { display: inline-flex; }
+    .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+(() => {
+  // =====================================================================
+  // Reactive State (mirrors Vue 3 lcStore.js + navConfig.js)
+  // =====================================================================
+  const ROOT_GROUPS = [
+    {
+      title: '你希望做什么?',
+      items: [
+        { id: 'run-samples', label: '运行样品', view: 'run-samples', help: '选择已启用的液相色谱检测项目，配置自动进样器序列并启动批量采集，实时查看 UV 色谱图与系统泵压。' },
+        { id: 'process-data', label: '处理数据', view: 'process-data', help: '对已完成采集的色谱批次进行自动积分、保留时间识别、标准曲线拟合与定量结果审核签批。' },
+        { id: 'sst', label: '系统适配性测试', view: 'sst', help: '依据 USP / ChP 药典标准自动验证理论塔板数 (N)、拖尾因子 (T)、分离度 (Rs) 与峰面积精密度 (RSD%)。' },
+        { id: 'maintenance', label: '维护系统', view: 'maintenance', help: '执行四元泵流动相灌注排气泡 (Purge)、色谱柱冲洗平衡、UV/DAD 氘灯能量自检与进样针清洗。' }
+      ]
+    },
+    {
+      title: '设定',
+      items: [
+        { id: 'new-project', label: '新项目', view: 'test-projects', drill: 'test-projects', sub: 'create-project', help: '直接进入「创建检测项目」四步向导：项目命名 → 流动相与梯度 → 色谱柱与检测器 → 保存启用。' },
+        { id: 'autosampler', label: '自动进样器', view: 'autosampler', help: '管理 48 位标准样品盘孔位类型分配（空白/标准品/质控/未知样品）与样品盘恒温控制。' },
+        { id: 'user-profile', label: '用户简介', view: 'user-profile', help: '管理当前操作员权限、自动锁屏超时时间与电子签名审计策略。' },
+        { id: 'processing-params', label: '处理参数', view: 'processing-params', help: '设定默认最小峰面积阈值、保留时间识别窗口与校准曲线加权方式。' }
+      ]
+    },
+    {
+      title: '管理',
+      items: [
+        { id: 'test-projects', label: '检测项目', view: 'test-projects', drill: 'test-projects', sub: 'create-project', help: '点击后左侧切换为「检测项目」二级导航菜单，集中完成创建、修改、重新排序、自定义实验、启停与删除。' },
+        { id: 'method-catalog', label: '液相方法目录', view: 'method-catalog', help: '浏览已验证的 HPLC / UHPLC 液相分析方法库，支持一键克隆为新的日常检测项目。' },
+        { id: 'report-formats', label: '报告格式', view: 'report-formats', help: '定制 COA 检测报告版式、附带色谱图/校准曲线选项与 PDF/CSV 导出字段。' },
+        { id: 'sharing', label: '共享', view: 'sharing', help: '导出/导入检测项目包 (.lcpkg) 或与实验室 LIMS 服务器同步样品清单。' },
+        { id: 'archive', label: '归档存档', view: 'archive', help: '按日期与项目检索只读历史色谱归档包并校验 SHA-256 完整性指纹。' },
+        { id: 'features', label: '功能', view: 'features', help: '查看已连接的四元泵、脱气机、自动进样器、柱温箱与 UV/DAD 检测器固件及授权状态。' }
+      ]
+    }
+  ];
+
+  const PROJECT_SUBS = [
+    { id: 'create-project', label: '创建检测项目', help: '通过 4 步向导新建液相色谱检测项目：提供名称、配置流动相梯度程序与色谱柱/波长参数。' },
+    { id: 'edit-project', label: '修改检测项目', help: '选择已有检测项目并微调流速、柱温、检测波长或流动相梯度表。' },
+    { id: 'reorder-project', label: '重新排序检测项目', help: '调整检测项目在「运行样品」界面中的展示优先级，将高频项目置顶。' },
+    { id: 'custom-experiment', label: '自定义实验', help: '灵活配置双波长采集通道、柱后平衡时间与重复进样针数，适用于方法开发。' },
+    { id: 'toggle-project', label: '启动/撤销检测项目', help: '控制项目对日常例行分析操作员的可见性，撤销后仍完整保留配置。' },
+    { id: 'delete-project', label: '删除检测项目', help: '从活动库移除不再使用的检测项目，不影响历史归档谱图。' }
+  ];
+
+  const createVials = () => {
+    const preset = {
+      A1: { type: 'blank', name: '流动相空白-01', vol: 10 },
+      A2: { type: 'std', name: '对照品混合液-L1', vol: 10 },
+      A3: { type: 'std', name: '对照品混合液-L2', vol: 10 },
+      A4: { type: 'std', name: '对照品混合液-L3', vol: 10 },
+      A5: { type: 'qc', name: '质控样-QC-Mid', vol: 10 },
+      B1: { type: 'sample', name: '农残样本-20261119-01', vol: 10 },
+      B2: { type: 'sample', name: '农残样本-20261119-02', vol: 10 },
+      B3: { type: 'sample', name: '农残样本-20261119-03', vol: 10 },
+      B4: { type: 'sample', name: '复方制剂-批号2609A', vol: 10 },
+      C1: { type: 'qc', name: '质控样-QC-End', vol: 10 }
+    };
+    const out = [];
+    for (const r of ['A','B','C','D','E','F']) {
+      for (let c = 1; c <= 8; c++) {
+        const pos = r + c;
+        const p = preset[pos];
+        out.push({ pos, type: p ? p.type : 'empty', name: p ? p.name : '', vol: p ? p.vol : 10 });
+      }
+    }
+    return out;
+  };
+
+  const state = {
+    view: 'home',
+    drill: null,
+    sub: 'create-project',
+    dark: false,
+    mobileOpen: false,
+    locked: false,
+    help: null,
+    toast: null,
+    sound: true,
+    operator: { name: '陈明远 (高级分析员)', id: 'OP-2048', role: '方法管理员 / QC', autoLock: 15, esign: true },
+    inst: { status: 'ready', statusText: '仪器就绪', pressure: 182.4, flow: 1.0, pA: 65, pB: 35, colTemp: 35.0, trayTemp: 15.0, wl: 254, lampEnergy: 94.6, activeVial: 'B1' },
+    projects: [
+      {
+        id: 'p1', name: 'pesticides_test', displayName: '果蔬多农残快速筛查 (HPLC-UV)', code: 'LC-METH-0102',
+        matrix: '植物源性食品 / 萃取液', enabled: true, column: 'Poroshell 120 EC-C18 (4.6×150 mm, 2.7 μm)',
+        phaseA: '0.1% 甲酸水溶液', phaseB: '色谱纯乙腈 (ACN)', flow: 1.0, colTemp: 35, injVol: 10, wl: 254, runTime: 8.0,
+        updatedAt: '2026-11-18 14:22',
+        gradient: [{ t: 0, b: 20 }, { t: 1.5, b: 20 }, { t: 5.5, b: 85 }, { t: 6.5, b: 85 }, { t: 6.6, b: 20 }, { t: 8.0, b: 20 }],
+        peaks: [
+          { name: '多菌灵', rt: 2.15, h: 68, w: 0.14, area: 412580, plates: 8420, tail: 1.06, rs: 0, conc: '12.45 μg/mL' },
+          { name: '吡虫啉', rt: 3.68, h: 92, w: 0.16, area: 658910, plates: 11240, tail: 1.04, rs: 6.12, conc: '24.80 μg/mL' },
+          { name: '啶虫脒', rt: 5.42, h: 54, w: 0.15, area: 334120, plates: 14680, tail: 1.09, rs: 7.45, conc: '9.86 μg/mL' }
+        ]
+      },
+      {
+        id: 'p2', name: 'analgesic_assay', displayName: '解热镇痛复方制剂含量测定', code: 'LC-METH-0205',
+        matrix: '片剂 / 口服制剂', enabled: true, column: 'Eclipse Plus C18 (4.6×100 mm, 3.5 μm)',
+        phaseA: '20 mM 磷酸二氢钾 (pH 3.0)', phaseB: '甲醇 (MeOH)', flow: 1.2, colTemp: 30, injVol: 5, wl: 272, runTime: 8.0,
+        updatedAt: '2026-11-16 09:40',
+        gradient: [{ t: 0, b: 25 }, { t: 4.5, b: 65 }, { t: 6.0, b: 65 }, { t: 6.2, b: 25 }, { t: 8.0, b: 25 }],
+        peaks: [
+          { name: '对乙酰氨基酚', rt: 1.92, h: 84, w: 0.13, area: 542100, plates: 9120, tail: 1.05, rs: 0, conc: '49.82 μg/mL' },
+          { name: '咖啡因', rt: 3.45, h: 76, w: 0.14, area: 478320, plates: 12100, tail: 1.03, rs: 6.84, conc: '19.95 μg/mL' },
+          { name: '阿司匹林', rt: 5.88, h: 63, w: 0.17, area: 421880, plates: 13850, tail: 1.08, rs: 9.15, conc: '48.70 μg/mL' }
+        ]
+      },
+      {
+        id: 'p3', name: 'water_soluble_vitamins', displayName: '水溶性维生素 (B1/B2/B6/C) 联合分析', code: 'LC-METH-0311',
+        matrix: '临床营养液 / 保健品', enabled: true, column: 'AQ-C18 极性耐水柱 (4.6×150 mm, 5 μm)',
+        phaseA: '0.05% 三氟乙酸水溶液', phaseB: '乙腈 (ACN)', flow: 0.8, colTemp: 28, injVol: 15, wl: 266, runTime: 8.0,
+        updatedAt: '2026-11-12 16:05',
+        gradient: [{ t: 0, b: 5 }, { t: 2.0, b: 10 }, { t: 5.0, b: 40 }, { t: 6.5, b: 40 }, { t: 6.7, b: 5 }, { t: 8.0, b: 5 }],
+        peaks: [
+          { name: '维生素 C', rt: 1.65, h: 78, w: 0.13, area: 495000, plates: 7850, tail: 1.11, rs: 0, conc: '32.10 μg/mL' },
+          { name: '维生素 B1', rt: 3.10, h: 61, w: 0.15, area: 368420, plates: 10240, tail: 1.07, rs: 6.45, conc: '15.40 μg/mL' },
+          { name: '维生素 B6', rt: 4.52, h: 71, w: 0.14, area: 432900, plates: 11950, tail: 1.04, rs: 6.22, conc: '18.25 μg/mL' },
+          { name: '维生素 B2', rt: 6.24, h: 48, w: 0.16, area: 289540, plates: 15320, tail: 1.06, rs: 7.38, conc: '8.90 μg/mL' }
+        ]
+      },
+      {
+        id: 'p4', name: 'aflatoxin_routine', displayName: '谷物黄曲霉毒素 B1/B2 常规监测', code: 'LC-METH-0408',
+        matrix: '粮油 / 饲料提取液', enabled: false, column: 'C18 (4.6×150 mm, 3 μm)',
+        phaseA: '超纯水', phaseB: '甲醇-乙腈 (1:1)', flow: 1.0, colTemp: 40, injVol: 20, wl: 365, runTime: 8.0,
+        updatedAt: '2026-10-29 11:18',
+        gradient: [{ t: 0, b: 45 }, { t: 6.0, b: 45 }, { t: 8.0, b: 45 }],
+        peaks: [
+          { name: '黄曲霉毒素 B2', rt: 3.85, h: 52, w: 0.15, area: 285400, plates: 10800, tail: 1.05, rs: 0, conc: '2.15 ng/mL' },
+          { name: '黄曲霉毒素 B1', rt: 5.12, h: 86, w: 0.15, area: 534200, plates: 12940, tail: 1.03, rs: 5.42, conc: '4.82 ng/mL' }
+        ]
+      }
+    ],
+    selProjId: 'p1',
+    // Run Samples state
+    runStep: 1,
+    runProgress: 0,
+    running: false,
+    showPressure: true,
+    sequence: [
+      { vial: 'A1', name: '流动相空白-01', type: '空白', vol: 10, status: 'done' },
+      { vial: 'A2', name: '对照品混合液-L1', type: '标准品', vol: 10, status: 'done' },
+      { vial: 'B1', name: '农残样本-20261119-01', type: '未知样品', vol: 10, status: 'ready' },
+      { vial: 'B2', name: '农残样本-20261119-02', type: '未知样品', vol: 10, status: 'queued' },
+      { vial: 'B3', name: '农残样本-20261119-03', type: '未知样品', vol: 10, status: 'queued' }
+    ],
+    // Create project wizard state
+    createStep: 1,
+    draft: {
+      name: 'pesticides_test_v2', displayName: '新建农残梯度筛查项目', code: 'LC-METH-0501',
+      matrix: '果蔬提取液 / 乙腈相', phaseA: '0.1% 甲酸水溶液', phaseB: '色谱纯乙腈 (ACN)',
+      flow: 1.0, col: 'Poroshell 120 EC-C18 (4.6×150 mm, 2.7 μm)', colTemp: 35, injVol: 10, wl: 254,
+      gradient: [{ t: 0, b: 15 }, { t: 1.5, b: 15 }, { t: 5.5, b: 80 }, { t: 6.5, b: 80 }, { t: 6.7, b: 15 }, { t: 8.0, b: 15 }]
+    },
+    editId: 'p1',
+    pendingDelId: null,
+    // Process Data state
+    selPeakName: '多菌灵',
+    batchApproved: false,
+    // SST state
+    sstMetrics: [
+      { label: '理论塔板数 (N)', limit: '≥ 5,000', val: '11,240', note: '柱效良好，满足药典标准' },
+      { label: '拖尾因子 (T)', limit: '0.90 – 1.20', val: '1.04', note: '峰形对称，无明显前伸拖尾' },
+      { label: '相邻峰分离度 (Rs)', limit: '≥ 2.00', val: '6.12', note: '基线完全分离' },
+      { label: '峰面积精密度 (RSD%)', limit: '≤ 1.00%', val: '0.28%', note: '6 针连续进样重复性优异' }
+    ],
+    sstLast: '2026-11-19 08:30 (6 针对照品)',
+    // Maintenance state
+    purgeCh: { A: true, B: true, C: false, D: false },
+    purgePct: 0,
+    purging: false,
+    lampDiag: '尚未执行本次自检 · 氘灯已点亮 1,248 h',
+    needleDiag: '上次深度清洗：今日 08:15',
+    // Autosampler
+    vials: createVials(),
+    selVialPos: 'B1',
+    // Params & Report
+    procParams: { minArea: 5000, minHeight: 1.5, rtWin: 0.15, weight: '1/x' },
+    report: { lab: '华测理化分析中心 · 液相色谱实验室', fmt: 'PDF + CSV', chrom: true, cal: true, sst: true, audit: true }
+  };
+
+  let runTimer = null, purgeTimer = null, toastTimer = null;
+
+  function playChime(kind = 'ok') {
+    if (!state.sound) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      const ctx = new AC(), osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.type = 'sine';
+      const t = ctx.currentTime;
+      osc.frequency.setValueAtTime(kind === 'ok' ? 520 : 420, t);
+      osc.frequency.exponentialRampToValueAtTime(kind === 'ok' ? 760 : 340, t + 0.09);
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.exponentialRampToValueAtTime(0.07, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.15);
+      setTimeout(() => ctx.close().catch(() => {}), 220);
+    } catch {}
+  }
+
+  function toast(msg, type = 'ok') {
+    state.toast = { msg, type };
+    clearTimeout(toastTimer);
+    render();
+    toastTimer = setTimeout(() => { state.toast = null; render(); }, 3000);
+  }
+
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  }
+
+  function curProj() {
+    return state.projects.find(p => p.id === state.selProjId) || state.projects[0];
+  }
+
+  // =====================================================================
+  // Scientific SVG Builders (Chromatogram + Gradient Curve)
+  // =====================================================================
+  function svgChromatogram(proj, progressT, showPress, showInteg, selPeak) {
+    const W = 720, H = 240, P = { t: 24, r: 36, b: 32, l: 48 };
+    const pw = W - P.l - P.r, ph = H - P.t - P.b;
+    const total = proj.runTime || 8.0;
+    const maxT = Math.min(total, Math.max(0.05, progressT));
+    const sx = t => P.l + (t / total) * pw;
+    const sy = y => P.t + ph - ((Math.max(-2, Math.min(110, y)) + 2) / 112) * ph;
+    const evalY = t => {
+      let y = 1.6 + 0.45 * Math.sin(t * 0.9) + (t / total) * 1.8 + 11 * Math.exp(-Math.pow((t - 0.68) / 0.08, 2));
+      for (const pk of proj.peaks) y += pk.h * Math.exp(-Math.pow((t - pk.rt) / (pk.w || 0.14), 2));
+      return y;
+    };
+    let sigD = '';
+    for (let i = 0; i <= 240; i++) {
+      const t = (i / 240) * maxT;
+      sigD += (i === 0 ? 'M' : 'L') + sx(t).toFixed(1) + ',' + sy(evalY(t)).toFixed(1);
+    }
+    let pressD = '';
+    if (showPress) {
+      for (let i = 0; i <= 90; i++) {
+        const t = (i / 90) * maxT;
+        const pY = 58 + 20 * Math.sin((t / total) * Math.PI) + 1.4 * Math.cos(t * 3);
+        pressD += (i === 0 ? 'M' : 'L') + sx(t).toFixed(1) + ',' + sy(pY).toFixed(1);
+      }
+    }
+    let areas = '';
+    if (showInteg) {
+      for (const pk of proj.peaks) {
+        if (pk.rt > maxT) continue;
+        const t0 = Math.max(0, pk.rt - pk.w * 2.5), t1 = Math.min(total, pk.rt + pk.w * 2.5);
+        let d = `M${sx(t0).toFixed(1)},${sy(evalY(t0)).toFixed(1)}`;
+        for (let i = 0; i <= 28; i++) {
+          const t = t0 + (i / 28) * (t1 - t0);
+          d += `L${sx(t).toFixed(1)},${sy(evalY(t)).toFixed(1)}`;
+        }
+        d += `L${sx(t1).toFixed(1)},${sy(evalY(t1)).toFixed(1)} Z`;
+        const fill = pk.name === selPeak ? 'rgba(217,119,87,0.3)' : 'rgba(217,119,87,0.13)';
+        areas += `<path d="${d}" fill="${fill}" style="cursor:pointer" data-sel-peak="${esc(pk.name)}"/>`;
+      }
+    }
+    let labels = '';
+    for (const pk of proj.peaks) {
+      if (pk.rt > maxT + 0.04) continue;
+      const cx = sx(pk.rt), cy = sy(evalY(pk.rt));
+      const isS = pk.name === selPeak;
+      labels += `<g style="cursor:pointer" data-sel-peak="${esc(pk.name)}">
+        <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${isS ? 4.2 : 3.2}" fill="${isS ? 'var(--brand)' : 'var(--cds-surface-2)'}" stroke="var(--brand)" stroke-width="1.8"/>
+        <text x="${cx.toFixed(1)}" y="${Math.max(14, cy - 11).toFixed(1)}" text-anchor="middle" fill="var(--cds-text-primary)" font-size="10.5" font-weight="600">${esc(pk.name)}</text>
+        <text x="${cx.toFixed(1)}" y="${Math.max(24, cy - 1).toFixed(1)}" text-anchor="middle" fill="var(--cds-text-muted)" font-size="9.5" class="mono">${pk.rt.toFixed(2)} min</text>
+      </g>`;
+    }
+    const grid = [0, 25, 50, 75, 100].map(v =>
+      `<line x1="${P.l}" x2="${W-P.r}" y1="${sy(v)}" y2="${sy(v)}" stroke="var(--cds-border-subtle)" stroke-dasharray="2 3"/>
+       <text x="${P.l-8}" y="${sy(v)+3.5}" text-anchor="end" fill="var(--cds-text-muted)" font-size="10" class="mono">${v}</text>`
+    ).join('');
+    const xticks = Array.from({ length: Math.floor(total) + 1 }, (_, t) =>
+      `<text x="${sx(t)}" y="${H-P.b+16}" text-anchor="middle" fill="var(--cds-text-muted)" font-size="10" class="mono">${t.toFixed(1)}</text>`
+    ).join('');
+    const cursor = maxT < total ? `<line x1="${sx(maxT)}" x2="${sx(maxT)}" y1="${P.t}" y2="${H-P.b}" stroke="var(--cds-clay)" stroke-dasharray="3 3"/>` : '';
+    return `<div class="chart-box">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--cds-text-secondary);margin-bottom:5px">
+        <div style="display:flex;gap:14px">
+          <span><b style="color:var(--brand)">━</b> UV ${proj.wl} nm (mAU)</span>
+          ${showPress ? '<span><b style="color:var(--cds-text-accent)">┄</b> 系统泵压 (bar)</span>' : ''}
+        </div>
+        <span class="mono hint">t = ${maxT.toFixed(2)} / ${total.toFixed(1)} min</span>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
+        ${grid}
+        <line x1="${P.l}" y1="${P.t}" x2="${P.l}" y2="${H-P.b}" stroke="var(--cds-border-strong)"/>
+        <line x1="${P.l}" y1="${H-P.b}" x2="${W-P.r}" y2="${H-P.b}" stroke="var(--cds-border-strong)"/>
+        ${xticks}
+        <text x="${P.l+pw/2}" y="${H-4}" text-anchor="middle" fill="var(--cds-text-muted)" font-size="10">保留时间 Retention Time (min)</text>
+        ${areas}
+        ${showPress ? `<path d="${pressD}" fill="none" stroke="var(--cds-text-accent)" stroke-width="1.25" stroke-dasharray="4 3" opacity="0.55"/>` : ''}
+        <path d="${sigD}" fill="none" stroke="var(--brand)" stroke-width="1.9" stroke-linecap="round"/>
+        ${cursor}${labels}
+      </svg>
+    </div>`;
+  }
+
+  function svgGradient(steps) {
+    const W = 500, H = 172, P = { t: 16, r: 18, b: 28, l: 40 };
+    const pw = W - P.l - P.r, ph = H - P.t - P.b;
+    const sorted = [...steps].map(s => ({ t: Number(s.t)||0, b: Math.max(0, Math.min(100, Number(s.b)||0)) })).sort((a,b)=>a.t-b.t);
+    const maxT = Math.max(1, sorted[sorted.length - 1]?.t || 8);
+    const sx = t => P.l + (t / maxT) * pw;
+    const sy = b => P.t + ph - (b / 100) * ph;
+    const line = sorted.map((s,i) => `${i===0?'M':'L'}${sx(s.t).toFixed(1)},${sy(s.b).toFixed(1)}`).join(' ');
+    const area = sorted.length ? `${line} L${sx(sorted[sorted.length-1].t).toFixed(1)},${sy(0).toFixed(1)} L${sx(sorted[0].t).toFixed(1)},${sy(0).toFixed(1)} Z` : '';
+    const dots = sorted.map(s => `<circle cx="${sx(s.t).toFixed(1)}" cy="${sy(s.b).toFixed(1)}" r="3.4" fill="var(--cds-surface-2)" stroke="var(--cds-text-accent)" stroke-width="2"/>`).join('');
+    return `<div class="chart-box">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="font-weight:600;color:var(--cds-text-secondary)">流动相梯度曲线 (%B 有机相比例)</span>
+        <span class="mono hint">总时长 ${maxT.toFixed(1)} min</span>
+      </div>
+      <svg viewBox="0 0 ${W} ${H}" class="chart-svg">
+        ${[0,50,100].map(p=>`<line x1="${P.l}" x2="${W-P.r}" y1="${sy(p)}" y2="${sy(p)}" stroke="var(--cds-border-subtle)" stroke-dasharray="2 3"/>
+        <text x="${P.l-6}" y="${sy(p)+3.5}" text-anchor="end" fill="var(--cds-text-muted)" font-size="10" class="mono">${p}%</text>`).join('')}
+        <line x1="${P.l}" y1="${P.t}" x2="${P.l}" y2="${H-P.b}" stroke="var(--cds-border-strong)"/>
+        <line x1="${P.l}" y1="${H-P.b}" x2="${W-P.r}" y2="${H-P.b}" stroke="var(--cds-border-strong)"/>
+        <text x="${P.l}" y="${H-7}" fill="var(--cds-text-muted)" font-size="10" class="mono">0.0 min</text>
+        <text x="${P.l+pw/2}" y="${H-7}" text-anchor="middle" fill="var(--cds-text-muted)" font-size="10" class="mono">${(maxT/2).toFixed(1)} min</text>
+        <text x="${W-P.r}" y="${H-7}" text-anchor="end" fill="var(--cds-text-muted)" font-size="10" class="mono">${maxT.toFixed(1)} min</text>
+        <path d="${area}" fill="var(--cds-accent-soft)"/>
+        <path d="${line}" fill="none" stroke="var(--cds-text-accent)" stroke-width="2"/>
+        ${dots}
+      </svg>
+    </div>`;
+  }
+
+  // =====================================================================
+  // View Renderers
+  // =====================================================================
+  function renderLeftNav() {
+    const isDrill = state.drill === 'test-projects';
+    const hero = !isDrill
+      ? `<span class="nav-hero-kicker">欢迎</span><div class="nav-hero-title editorial">LC-PRO 3000</div>`
+      : `<button class="nav-back" data-action="home">‹ 返回主菜单</button><div class="nav-hero-title editorial">检测项目</div>`;
+
+    const menuHtml = !isDrill
+      ? ROOT_GROUPS.map(g => `<div class="nav-group">
+          <div class="nav-group-title">${g.title}</div>
+          ${g.items.map(it => {
+            const act = it.drill ? state.drill === it.drill : (!state.drill && state.view === it.view);
+            return `<div class="nav-row ${act ? 'is-active' : ''}" data-nav="${it.id}">
+              <span class="nav-label">${it.label}${it.drill ? ' <span style="opacity:.5">›</span>' : ''}</span>
+              <button type="button" class="help-dot" data-help-title="${esc(it.label)}" data-help-body="${esc(it.help)}" title="查看说明">?</button>
+            </div>`;
+          }).join('')}
+        </div>`).join('')
+      : `<div class="nav-group">
+          <div class="nav-group-title">你希望做什么?</div>
+          ${PROJECT_SUBS.map(s => `<div class="nav-row nav-row-sub ${state.sub === s.id ? 'is-active' : ''}" data-sub="${s.id}">
+            <span class="nav-label">${s.label}</span>
+            <button type="button" class="help-dot" data-help-title="${esc(s.label)}" data-help-body="${esc(s.help)}" title="查看说明">?</button>
+          </div>`).join('')}
+        </div>
+        <div class="sub-callout"><strong>导航向导提示</strong>当前处于「检测项目」二级菜单，选择任一任务即可在右侧分步完成操作。</div>`;
+
+    return `<aside class="nav-rail ${state.mobileOpen ? 'open' : ''}">
+      <div class="nav-header">
+        <div class="nav-brand-row">
+          <button class="brand-btn" data-action="home" title="返回主页">
+            <span class="brand-mark">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2.8C12 2.8 5.5 10.2 5.5 14.8C5.5 18.4 8.4 21.2 12 21.2C15.6 21.2 18.5 18.4 18.5 14.8C18.5 10.2 12 2.8 12 2.8Z" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8.5 15.6H10.6L12 11.4L13.5 16.4L14.8 14.8H16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span><span class="brand-name">LC-Guide®</span><span class="brand-sub">液相色谱例行分析软件</span></span>
+          </button>
+          <button class="icon-btn" data-action="lock" title="锁定工作站屏幕" aria-label="锁屏">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          </button>
+        </div>
+        ${hero}
+      </div>
+      <div class="nav-scroll scroll-fade">${menuHtml}</div>
+      <div class="nav-footer">
+        <div class="op-meta">
+          <span class="led ${state.inst.status === 'running' ? 'is-running dot-pulse' : 'dot-breathe'}"></span>
+          <div style="min-width:0">
+            <div class="op-name">${esc(state.operator.name)}</div>
+            <div class="op-sub mono">${esc(state.inst.statusText)} · ${state.inst.pressure.toFixed(1)} bar</div>
+          </div>
+        </div>
+        <button class="icon-btn" data-action="theme" title="${state.dark ? '切换浅色温润纸感模式' : '切换深色暗调模式'}">
+          ${state.dark ? '☀' : '☾'}
+        </button>
+      </div>
+    </aside>`;
+  }
+
+  function renderTopBar() {
+    const tabs = [
+      { id: 'home', label: '主页' },
+      { id: 'monitor', label: '仪器监控' },
+      { id: 'method-catalog', label: '方法库' },
+      { id: 'help', label: '帮助' },
+      { id: 'lock', label: '退出' }
+    ];
+    return `<header class="top-bar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-sm mobile-btn" data-action="mobile-menu">☰ 菜单</button>
+        <div class="segmented">
+          ${tabs.map(t => `<button class="seg-btn ${(t.id==='home'&&state.view==='home'&&!state.drill)||(t.id===state.view)?'is-active':''}" data-top="${t.id}">${t.label}</button>`).join('')}
+        </div>
+      </div>
+      <div class="telemetry" data-top="monitor" title="点击查看仪器实时流路">
+        <span class="badge ${state.inst.status==='running'?'b-run':'b-ready'}">
+          <span class="b-dot ${state.inst.status==='running'?'dot-pulse':'dot-breathe'}"></span>${esc(state.inst.statusText)}
+        </span>
+        <span><span class="t-lbl">泵压</span><b class="mono">${state.inst.pressure.toFixed(1)}</b><span class="t-unit">bar</span></span>
+        <span class="t-sep"></span>
+        <span><span class="t-lbl">流速</span><b class="mono">${state.inst.flow.toFixed(2)}</b><span class="t-unit">mL/min</span></span>
+        <span class="t-sep"></span>
+        <span><span class="t-lbl">柱温</span><b class="mono">${state.inst.colTemp.toFixed(1)}</b><span class="t-unit">°C</span></span>
+        <span class="t-sep"></span>
+        <span><span class="t-lbl">UV</span><b class="mono">${state.inst.wl}</b><span class="t-unit">nm</span></span>
+      </div>
+    </header>`;
+  }
+
+  function renderMainView() {
+    const proj = curProj();
+
+    if (state.view === 'home') {
+      const enabledCnt = state.projects.filter(p => p.enabled).length;
+      return `
+        <div class="banner">
+          <div>
+            <h1>欢迎使用 LC-Guide® 液相色谱例行分析工作站</h1>
+            <p>左侧遵循 AB SCIEX Cliquid® 任务向导式分层导航，融合 Open Claude UI 温润纸感 / 暗调体系。</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" data-jump="run-samples">立即运行样品</button>
+            <button class="btn" data-jump="create-project">创建检测项目</button>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-bottom:14px">
+          <div class="metric"><div style="display:flex;justify-content:space-between"><span class="hint">四元梯度泵</span><span class="badge b-ready">稳定</span></div><div class="metric-val mono">${state.inst.pressure.toFixed(1)} <span class="hint">bar</span></div><div class="hint mono">流速 ${state.inst.flow.toFixed(2)} mL/min · A${state.inst.pA}/B${state.inst.pB}</div></div>
+          <div class="metric"><div style="display:flex;justify-content:space-between"><span class="hint">柱温箱</span><span class="badge b-ready">恒温</span></div><div class="metric-val mono">${state.inst.colTemp.toFixed(1)} <span class="hint">°C</span></div><div class="hint">波动 ±0.05 °C · 控温稳定</div></div>
+          <div class="metric"><div style="display:flex;justify-content:space-between"><span class="hint">UV / DAD 检测器</span><span class="badge b-ready">就绪</span></div><div class="metric-val mono">${state.inst.wl} <span class="hint">nm</span></div><div class="hint">氘灯能量 ${state.inst.lampEnergy}% · 基线正常</div></div>
+          <div class="metric"><div style="display:flex;justify-content:space-between"><span class="hint">检测项目库</span><span class="badge b-muted">共 ${state.projects.length} 项</span></div><div class="metric-val mono">${enabledCnt} <span class="hint">项启用</span></div><div class="hint">进样盘恒温 ${state.inst.trayTemp.toFixed(1)} °C</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>常用导航流程</span><span class="hint">点击即可进入对应分步向导</span></div>
+          <div class="grid-3">
+            <div class="guide-card" data-jump="run-samples"><span style="font-size:11.5px;font-weight:600;color:var(--brand)">01 · 例行采集</span><b>运行样品批次</b><span class="hint">选择项目、核对样品序列并实时查看 UV 色谱图与泵压。</span><span style="font-size:12.5px;font-weight:600;color:var(--cds-text-accent)">进入运行向导 →</span></div>
+            <div class="guide-card" data-jump="create-project"><span style="font-size:11.5px;font-weight:600;color:var(--brand)">02 · 项目管理</span><b>创建或修改检测项目</b><span class="hint">左侧切换为「检测项目」二级菜单，四步向导完成命名与梯度曲线配置。</span><span style="font-size:12.5px;font-weight:600;color:var(--cds-text-accent)">打开检测项目向导 →</span></div>
+            <div class="guide-card" data-jump="sst"><span style="font-size:11.5px;font-weight:600;color:var(--brand)">03 · 合规验证</span><b>系统适配性测试 (SST)</b><span class="hint">一键校验理论塔板数 N、拖尾因子 T、分离度 Rs 与峰面积 RSD%。</span><span style="font-size:12.5px;font-weight:600;color:var(--cds-text-accent)">运行适配性检查 →</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>近期分析批次</span><button class="btn btn-sm" data-jump="process-data">进入数据处理</button></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>批次编号</th><th>检测项目</th><th>样品数</th><th>操作员</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">BATCH-20261119-01</td><td><b>果蔬多农残快速筛查</b><div class="hint mono">pesticides_test</div></td><td class="mono">12 针</td><td>陈明远</td><td><span class="badge b-ready">已完成 · 通过</span></td><td><button class="btn btn-sm" data-jump="process-data">查看谱图</button></td></tr>
+              <tr><td class="mono">BATCH-20261119-02</td><td><b>解热镇痛复方制剂含量测定</b><div class="hint mono">analgesic_assay</div></td><td class="mono">8 针</td><td>陈明远</td><td><span class="badge b-warn">待数据复核</span></td><td><button class="btn btn-sm" data-jump="process-data">复核积分</button></td></tr>
+            </tbody>
+          </table></div>
+        </div>`;
+    }
+
+    if (state.view === 'run-samples') {
+      const enabled = state.projects.filter(p => p.enabled);
+      return `
+        <div class="banner">
+          <div><h1>运行样品</h1><p>三步引导流程：选择检测项目 → 核对自动进样序列 → 实时色谱采集监控。</p></div>
+          <div style="display:flex;gap:8px">
+            ${!state.running
+              ? `<button class="btn btn-primary" data-run="start">▶ 启动当前进样</button>`
+              : `<button class="btn" data-run="pause">暂停</button><button class="btn btn-danger" data-run="stop">停止</button>`}
+          </div>
+        </div>
+        <div class="stepper">
+          ${[1,2,3].map((n,i)=>`${i?'<span class="hint">›</span>':''}<div class="step-item ${state.runStep===n?'is-active':state.runStep>n?'is-done':''}" data-run-step="${n}"><span class="step-num">${n}</span>${['选择检测项目','配置样品序列','实时采集与谱图'][i]}</div>`).join('')}
+        </div>
+        ${state.runStep === 1 ? `
+          <div class="card">
+            <div class="card-title"><span>第一步：选择要运行的液相色谱检测项目</span><span class="hint">仅展示已启用项目</span></div>
+            <div class="grid-2">
+              ${enabled.map(p => `<div class="proj-opt ${state.selProjId===p.id?'is-sel':''}" data-pick-proj="${p.id}">
+                <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px">
+                  <div><b>${esc(p.displayName)}</b><div class="hint mono">${esc(p.name)} · ${esc(p.code)}</div></div>
+                  <span class="badge b-ready">已启用</span>
+                </div>
+                <div class="hint">${esc(p.column)}</div>
+                <div class="hint mono" style="margin-top:3px">流速 ${p.flow} mL/min · 柱温 ${p.colTemp}°C · UV ${p.wl} nm</div>
+              </div>`).join('')}
+            </div>
+            <div class="wiz-foot">
+              <button class="btn" data-jump="create-project">新建检测项目</button>
+              <button class="btn btn-primary" data-run-step="2">下一步：配置样品序列 →</button>
+            </div>
+          </div>` : ''}
+        ${state.runStep === 2 ? `
+          <div class="card">
+            <div class="card-title"><span>第二步：核对自动进样序列（${esc(proj.displayName)}）</span><button class="btn btn-sm" data-jump="autosampler">查看样品盘</button></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>序号</th><th>瓶位</th><th>样品名称</th><th>类型</th><th>进样量</th><th>状态</th></tr></thead>
+              <tbody>${state.sequence.map((s,i)=>`<tr class="${s.status==='running'?'is-sel':''}">
+                <td class="mono">${i+1}</td><td class="mono"><b>${esc(s.vial)}</b></td><td>${esc(s.name)}</td>
+                <td><span class="badge b-muted">${esc(s.type)}</span></td><td class="mono">${s.vol} μL</td>
+                <td><span class="badge ${s.status==='done'?'b-ready':s.status==='running'?'b-run':s.status==='ready'?'b-warn':'b-muted'}">${{done:'已完成',running:'采集中',ready:'下一针',queued:'队列中'}[s.status]}</span></td>
+              </tr>`).join('')}</tbody>
+            </table></div>
+            <div class="wiz-foot">
+              <button class="btn" data-run-step="1">← 上一步</button>
+              <button class="btn btn-primary" data-run="start">开始执行序列并查看实时谱图 →</button>
+            </div>
+          </div>` : ''}
+        ${state.runStep === 3 ? `
+          <div class="card">
+            <div class="card-title">
+              <span>实时色谱监控 · ${esc(proj.displayName)} <span class="hint mono" style="margin-left:6px">瓶位 ${state.inst.activeVial}</span></span>
+              <div style="display:flex;gap:10px;align-items:center">
+                <label style="font-size:12.5px;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
+                  <input type="checkbox" data-toggle-press ${state.showPressure?'checked':''}/> 叠加泵压
+                </label>
+                <button class="btn btn-sm" data-jump="process-data">前往数据处理</button>
+              </div>
+            </div>
+            ${svgChromatogram(proj, state.runProgress > 0 ? state.runProgress : proj.runTime, state.showPressure, false, '')}
+            <div style="display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:11px;padding-top:10px;border-top:1px solid var(--cds-border-subtle);font-size:12.5px">
+              <span><span class="hint">流动相 A：</span>${esc(proj.phaseA)}</span>
+              <span><span class="hint">流动相 B：</span>${esc(proj.phaseB)}</span>
+              <span><span class="hint">流速：</span><b class="mono">${proj.flow.toFixed(2)} mL/min</b></span>
+              <span><span class="hint">柱温：</span><b class="mono">${proj.colTemp} °C</b></span>
+            </div>
+          </div>` : ''}`;
+    }
+
+    if (state.view === 'test-projects') {
+      if (state.sub === 'create-project') {
+        const d = state.draft;
+        return `
+          <div class="banner">
+            <div><h1>创建检测项目</h1><p>按照下方引导步骤完成命名、流动相梯度程序与色谱柱配置，保存后立即投入使用。</p></div>
+            <span class="badge b-run mono">步骤 ${state.createStep} / 4</span>
+          </div>
+          <div class="stepper">
+            ${['项目命名','流动相与梯度','色谱柱与检测器','摘要确认'].map((lbl,i)=>`${i?'<span class="hint">›</span>':''}<div class="step-item ${state.createStep===i+1?'is-active':state.createStep>i+1?'is-done':''}" data-cstep="${i+1}"><span class="step-num">${i+1}</span>${lbl}</div>`).join('')}
+          </div>
+          ${state.createStep === 1 ? `
+            <div class="card">
+              <div class="prompt-hero">
+                <label class="label" style="font-size:15px;display:block;margin-bottom:4px" for="d-name">为新检测项目提供一个名称</label>
+                <div class="hint" style="margin-bottom:11px">建议使用清晰的英文方法标识或实验室编码，便于自动归档与 LIMS 对接。</div>
+                <input id="d-name" class="input mono" style="max-width:460px;font-size:15px;padding:9px 12px;background:var(--cds-surface-2)" value="${esc(d.name)}" data-draft="name" placeholder="例如：pesticides_test"/>
+              </div>
+              <div class="grid-3" style="margin-top:16px">
+                <div class="field"><label class="label">中文展示名称</label><input class="input" value="${esc(d.displayName)}" data-draft="displayName"/></div>
+                <div class="field"><label class="label">SOP 方法编号</label><input class="input mono" value="${esc(d.code)}" data-draft="code"/></div>
+                <div class="field"><label class="label">适用样品基质</label><input class="input" value="${esc(d.matrix)}" data-draft="matrix"/></div>
+              </div>
+              <div class="wiz-foot"><span class="hint">左侧可随时切换修改/排序/启停项目</span><button class="btn btn-primary" data-cstep="2">下一步：流动相与梯度 →</button></div>
+            </div>` : ''}
+          ${state.createStep === 2 ? `
+            <div class="card">
+              <div class="card-title"><span>配置流动相与梯度洗脱程序</span><button class="btn btn-sm" data-grad="add">+ 添加节点</button></div>
+              <div class="grid-3">
+                <div class="field"><label class="label">流动相 A（水相）</label><input class="input" value="${esc(d.phaseA)}" data-draft="phaseA"/></div>
+                <div class="field"><label class="label">流动相 B（有机相）</label><input class="input" value="${esc(d.phaseB)}" data-draft="phaseB"/></div>
+                <div class="field"><label class="label">流速 (mL/min)</label><input type="number" step="0.1" class="input mono" value="${d.flow}" data-draft="flow"/></div>
+              </div>
+              <div class="grid-2" style="align-items:start">
+                <div class="table-wrap"><table>
+                  <thead><tr><th>时间 (min)</th><th>%A</th><th>%B</th><th></th></tr></thead>
+                  <tbody>${d.gradient.map((g,i)=>`<tr>
+                    <td><input type="number" step="0.1" class="input mono" style="width:76px;padding:5px 8px" value="${g.t}" data-gt="${i}"/></td>
+                    <td class="mono">${Math.max(0, 100 - (Number(g.b)||0))}%</td>
+                    <td><input type="number" min="0" max="100" class="input mono" style="width:76px;padding:5px 8px" value="${g.b}" data-gb="${i}"/></td>
+                    <td><button class="btn btn-sm" data-grad-del="${i}">×</button></td>
+                  </tr>`).join('')}</tbody>
+                </table></div>
+                ${svgGradient(d.gradient)}
+              </div>
+              <div class="wiz-foot"><button class="btn" data-cstep="1">← 上一步</button><button class="btn btn-primary" data-cstep="3">下一步：色谱柱与检测器 →</button></div>
+            </div>` : ''}
+          ${state.createStep === 3 ? `
+            <div class="card">
+              <div class="card-title"><span>色谱柱规格、柱温箱与 UV/DAD 检测波长</span></div>
+              <div class="grid-2">
+                <div class="field"><label class="label">色谱柱型号</label><input class="input" value="${esc(d.col)}" data-draft="col"/></div>
+                <div class="field"><label class="label">柱温箱温度 (°C)</label><input type="number" class="input mono" value="${d.colTemp}" data-draft="colTemp"/></div>
+                <div class="field"><label class="label">进样体积 (μL)</label><input type="number" class="input mono" value="${d.injVol}" data-draft="injVol"/></div>
+                <div class="field"><label class="label">UV 检测主波长 (nm)</label><input type="number" class="input mono" value="${d.wl}" data-draft="wl"/></div>
+              </div>
+              <div class="wiz-foot"><button class="btn" data-cstep="2">← 上一步</button><button class="btn btn-primary" data-cstep="4">下一步：摘要确认 →</button></div>
+            </div>` : ''}
+          ${state.createStep === 4 ? `
+            <div class="card">
+              <div class="card-title"><span>核对新检测项目参数并保存启用</span></div>
+              <div class="grid-2" style="margin-bottom:13px">
+                <div class="metric"><div class="hint">项目名称 / 编号</div><b class="mono">${esc(d.name)} · ${esc(d.code)}</b><div class="hint" style="margin-top:3px">${esc(d.displayName)}</div></div>
+                <div class="metric"><div class="hint">仪器条件摘要</div><b class="mono">${d.flow} mL/min · ${d.colTemp} °C · ${d.injVol} μL · ${d.wl} nm</b><div class="hint" style="margin-top:3px">${esc(d.col)}</div></div>
+              </div>
+              ${svgGradient(d.gradient)}
+              <div class="wiz-foot"><button class="btn" data-cstep="3">← 返回修改</button><button class="btn btn-primary" data-save-proj>保存并立即启用该项目</button></div>
+            </div>` : ''}`;
+      }
+
+      if (state.sub === 'edit-project') {
+        const ep = state.projects.find(p => p.id === state.editId) || state.projects[0];
+        return `<div class="banner"><div><h1>修改检测项目</h1><p>选择已有液相项目并调整流速、柱温与检测波长。</p></div><button class="btn btn-primary" data-toast="已保存对「${esc(ep.name)}」的修改">保存修改</button></div>
+          <div class="card">
+            <div class="field"><label class="label">选择检测项目</label>
+              <select class="select" data-edit-pick>${state.projects.map(p=>`<option value="${p.id}" ${p.id===ep.id?'selected':''}>${esc(p.displayName)} (${esc(p.name)})</option>`).join('')}</select>
+            </div>
+            <div class="grid-3">
+              <div class="field"><label class="label">流速 (mL/min)</label><input type="number" step="0.1" class="input mono" value="${ep.flow}" data-ep="flow"/></div>
+              <div class="field"><label class="label">柱温 (°C)</label><input type="number" class="input mono" value="${ep.colTemp}" data-ep="colTemp"/></div>
+              <div class="field"><label class="label">检测波长 (nm)</label><input type="number" class="input mono" value="${ep.wl}" data-ep="wl"/></div>
+            </div>
+            ${svgGradient(ep.gradient)}
+          </div>`;
+      }
+
+      if (state.sub === 'reorder-project') {
+        return `<div class="banner"><div><h1>重新排序检测项目</h1><p>调整项目在「运行样品」中的展示优先级。</p></div></div>
+          <div class="card"><div class="table-wrap"><table>
+            <thead><tr><th>排序</th><th>检测项目</th><th>方法编号</th><th>调整</th></tr></thead>
+            <tbody>${state.projects.map((p,i)=>`<tr>
+              <td class="mono"><b>#${i+1}</b></td><td><b>${esc(p.displayName)}</b><div class="hint mono">${esc(p.name)}</div></td>
+              <td class="mono">${esc(p.code)}</td>
+              <td><button class="btn btn-sm" ${i===0?'disabled':''} data-move="${i}:-1">上移 ↑</button> <button class="btn btn-sm" ${i===state.projects.length-1?'disabled':''} data-move="${i}:1">下移 ↓</button></td>
+            </tr>`).join('')}</tbody>
+          </table></div></div>`;
+      }
+
+      if (state.sub === 'custom-experiment') {
+        return `<div class="banner"><div><h1>自定义实验</h1><p>面向方法开发自由组合双波长采集、平衡时长与重复针数。</p></div><button class="btn btn-primary" data-jump="run-samples">生成并进入运行</button></div>
+          <div class="card"><div class="grid-2">
+            <div class="field"><label class="label">实验任务名称</label><input class="input" value="梯度斜率优化对比实验"/></div>
+            <div class="field"><label class="label">单样品重复进样针数</label><input type="number" class="input mono" value="3"/></div>
+            <div class="field"><label class="label">柱后平衡时间 (min)</label><input type="number" step="0.5" class="input mono" value="3.0"/></div>
+            <div class="field"><label class="label">辅助 UV 波长 (nm)</label><input type="number" class="input mono" value="280"/></div>
+          </div></div>`;
+      }
+
+      if (state.sub === 'toggle-project') {
+        return `<div class="banner"><div><h1>启动 / 撤销检测项目</h1><p>控制项目是否向日常例行分析操作员展示。</p></div></div>
+          <div class="card"><div class="table-wrap"><table>
+            <thead><tr><th>检测项目</th><th>柱温 / 波长</th><th>当前状态</th><th>操作</th></tr></thead>
+            <tbody>${state.projects.map(p=>`<tr>
+              <td><b>${esc(p.displayName)}</b><div class="hint mono">${esc(p.name)}</div></td>
+              <td class="mono">${p.colTemp} °C · ${p.wl} nm</td>
+              <td><span class="badge ${p.enabled?'b-ready':'b-muted'}">${p.enabled?'已启动':'已撤销'}</span></td>
+              <td><button class="btn btn-sm ${p.enabled?'':'btn-primary'}" data-toggle-proj="${p.id}">${p.enabled?'撤销停用':'重新启动'}</button></td>
+            </tr>`).join('')}</tbody>
+          </table></div></div>`;
+      }
+
+      return `<div class="banner"><div><h1>删除检测项目</h1><p>移除不再使用的项目；已归档历史谱图与审计追踪保持不变。</p></div></div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>检测项目</th><th>方法编号</th><th>更新时间</th><th>操作</th></tr></thead>
+          <tbody>${state.projects.map(p=>`<tr>
+            <td><b>${esc(p.displayName)}</b><div class="hint mono">${esc(p.name)}</div></td>
+            <td class="mono">${esc(p.code)}</td><td class="mono">${esc(p.updatedAt)}</td>
+            <td>${state.pendingDelId===p.id
+              ? `<button class="btn btn-sm btn-danger" data-del-confirm="${p.id}">确认删除</button> <button class="btn btn-sm" data-del-cancel>取消</button>`
+              : `<button class="btn btn-sm btn-danger" data-del-ask="${p.id}">删除</button>`}</td>
+          </tr>`).join('')}</tbody>
+        </table></div></div>`;
+    }
+
+    if (state.view === 'process-data') {
+      const selPk = proj.peaks.find(p => p.name === state.selPeakName) || proj.peaks[0];
+      return `<div class="banner">
+          <div><h1>处理数据</h1><p>点击色谱峰区可联动高亮定量表，审核通过后生成电子签批记录。</p></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="select" style="width:220px" data-proc-proj>${state.projects.map(p=>`<option value="${p.id}" ${p.id===proj.id?'selected':''}>${esc(p.displayName)}</option>`).join('')}</select>
+            <button class="btn btn-primary" data-approve>${state.batchApproved ? '✓ 已审核签批' : '审核通过并签批'}</button>
+          </div>
+        </div>
+        <div class="grid-2" style="grid-template-columns:1.5fr 1fr">
+          <div class="card" style="margin:0"><div class="card-title"><span>积分色谱图（点击峰区联动）</span><span class="badge b-ready">自动基线</span></div>
+            ${svgChromatogram(proj, proj.runTime, false, true, selPk?.name || '')}
+          </div>
+          <div class="card" style="margin:0"><div class="card-title"><span>标准曲线 · ${esc(selPk?.name)}</span><span class="badge b-muted mono">R² = 0.9998</span></div>
+            <div class="chart-box"><svg viewBox="0 0 280 175" class="chart-svg">
+              <line x1="34" y1="14" x2="34" y2="146" stroke="var(--cds-border-strong)"/>
+              <line x1="34" y1="146" x2="262" y2="146" stroke="var(--cds-border-strong)"/>
+              <line x1="34" y1="144" x2="250" y2="22" stroke="var(--cds-text-accent)" stroke-width="1.8"/>
+              ${[[64,127],[110,101],[164,70],[212,43],[246,24]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4" fill="var(--brand)" stroke="var(--cds-surface-2)" stroke-width="1.5"/>`).join('')}
+              <text x="148" y="168" text-anchor="middle" fill="var(--cds-text-muted)" font-size="10">浓度 Concentration (μg/mL)</text>
+              <text x="46" y="32" fill="var(--cds-text-secondary)" font-size="10.5" class="mono">y = 26,410x + 812</text>
+            </svg></div>
+            <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px">
+              <span class="hint">1/x 加权线性回归</span><span>实测：<b class="mono">${esc(selPk?.conc)}</b></span>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="card-title"><span>定量积分结果表</span><span class="hint">共 ${proj.peaks.length} 个目标峰</span></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>化合物</th><th>保留时间 (min)</th><th>峰面积</th><th>塔板数 N</th><th>拖尾因子 T</th><th>分离度 Rs</th><th>浓度</th><th>判定</th></tr></thead>
+            <tbody>${proj.peaks.map(pk=>`<tr class="${selPk?.name===pk.name?'is-sel':''}" style="cursor:pointer" data-sel-peak="${esc(pk.name)}">
+              <td><b>${esc(pk.name)}</b></td><td class="mono">${pk.rt.toFixed(2)}</td><td class="mono">${pk.area.toLocaleString()}</td>
+              <td class="mono">${pk.plates.toLocaleString()}</td><td class="mono">${pk.tail.toFixed(2)}</td>
+              <td class="mono">${pk.rs ? pk.rs.toFixed(2) : '—'}</td><td class="mono"><b>${esc(pk.conc)}</b></td>
+              <td><span class="badge b-ready">合格</span></td>
+            </tr>`).join('')}</tbody>
+          </table></div>
+        </div>`;
+    }
+
+    if (state.view === 'sst') {
+      return `<div class="banner"><div><h1>系统适配性测试 (SST)</h1><p>依据药典标准校验柱效、对称性、分离度与连续进样重现性。</p></div><button class="btn btn-primary" data-sst-run>运行 SST 校验</button></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px"><span class="badge b-ready">全部指标合格 · 允许例行运行</span><span class="hint mono">上次验证：${esc(state.sstLast)}</span></div>
+        <div class="grid-2">${state.sstMetrics.map(m=>`<div class="card" style="margin:0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span class="hint" style="font-weight:600">${m.label}</span><span class="badge b-ready">合格</span></div>
+          <div style="font-size:26px;font-weight:600;margin-bottom:6px" class="mono">${m.val}</div>
+          <div style="font-size:12.5px">标准限值：<b class="mono">${m.limit}</b></div>
+          <div class="hint" style="margin-top:2px">${m.note}</div>
+        </div>`).join('')}</div>`;
+    }
+
+    if (state.view === 'maintenance') {
+      return `<div class="banner"><div><h1>维护系统</h1><p>遵循向导安全执行流动相灌注排气泡 (Purge)、光学自检与进样针清洗。</p></div></div>
+        <div class="card">
+          <div class="card-title"><span>1. 四元泵流动相灌注排气泡 (Purge)</span><span class="badge ${state.purging?'b-run':'b-muted'}">${state.purging ? '进行中 ' + state.purgePct + '%' : '待执行'}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;gap:8px">${['A','B','C','D'].map(ch=>`<label style="display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;cursor:pointer;background:${state.purgeCh[ch]?'var(--cds-clay-soft)':'var(--cds-surface-1)'};color:${state.purgeCh[ch]?'var(--brand)':'inherit'};border:1px solid ${state.purgeCh[ch]?'var(--cds-clay-border)':'var(--cds-border-subtle)'}"><input type="checkbox" data-purge-ch="${ch}" ${state.purgeCh[ch]?'checked':''}/> 通道 ${ch}</label>`).join('')}</div>
+            <button class="btn btn-primary" ${state.purging?'disabled':''} data-purge-start>${state.purging ? '灌注中...' : '开始排气泡 (3.0 mL/min)'}</button>
+          </div>
+          ${state.purgePct > 0 ? `<div class="progress-track"><div class="progress-fill" style="width:${state.purgePct}%"></div></div>` : ''}
+        </div>
+        <div class="grid-2">
+          <div class="card" style="margin:0"><div class="card-title"><span>2. UV / DAD 氘灯能量自检</span></div><div style="background:var(--cds-surface-1);padding:10px 12px;border-radius:8px;font-size:12.5px;margin-bottom:12px">${esc(state.lampDiag)}</div><button class="btn" data-lamp-check>执行光学自检</button></div>
+          <div class="card" style="margin:0"><div class="card-title"><span>3. 自动进样针深度清洗</span></div><div style="background:var(--cds-surface-1);padding:10px 12px;border-radius:8px;font-size:12.5px;margin-bottom:12px">${esc(state.needleDiag)}</div><button class="btn" data-needle-wash>立即清洗进样针</button></div>
+        </div>`;
+    }
+
+    if (state.view === 'autosampler') {
+      const sv = state.vials.find(v => v.pos === state.selVialPos) || state.vials[0];
+      const tMap = { empty:'空位', blank:'空白', std:'标准品', qc:'质控 QC', sample:'未知样品' };
+      return `<div class="banner"><div><h1>自动进样器</h1><p>点击 48 位标准样品盘任意孔位查看或分配样品类型与进样体积。</p></div><span class="badge b-ready mono">样品盘恒温 ${state.inst.trayTemp.toFixed(1)} °C</span></div>
+        <div class="grid-2" style="grid-template-columns:1.4fr 1fr">
+          <div class="card" style="margin:0">
+            <div class="card-title"><span>48 位进样盘 (2 mL 样品瓶)</span><span class="hint">橙=样品 · 蓝=标品 · 绿=质控</span></div>
+            <div class="vial-grid">${state.vials.map(v=>`<button class="vial mono v-${v.type} ${v.pos===sv.pos?'is-sel':''}" data-vial="${v.pos}" title="${v.pos}: ${esc(v.name||'空位')}">${v.pos}</button>`).join('')}</div>
+          </div>
+          <div class="card" style="margin:0">
+            <div class="card-title"><span>瓶位详情 · <span class="mono">${sv.pos}</span></span><span class="badge b-muted">${tMap[sv.type]}</span></div>
+            <div class="field"><label class="label">样品类型</label>
+              <select class="select" data-vial-type>${Object.entries(tMap).map(([k,l])=>`<option value="${k}" ${sv.type===k?'selected':''}>${l}</option>`).join('')}</select>
+            </div>
+            <div class="field"><label class="label">样品名称</label><input class="input" value="${esc(sv.name)}" data-vial-name placeholder="输入样品标识"/></div>
+            <div class="field"><label class="label">进样体积 (μL)</label><input type="number" class="input mono" value="${sv.vol}" data-vial-vol/></div>
+            <button class="btn btn-primary" style="width:100%" data-toast="已更新瓶位 ${sv.pos} 配置">保存当前瓶位</button>
+          </div>
+        </div>`;
+    }
+
+    if (state.view === 'monitor') {
+      return `<div class="banner"><div><h1>仪器实时监控</h1><p>HPLC 四元梯度流路拓扑与模块实时遥测。</p></div><button class="btn" data-jump="maintenance">进入系统维护</button></div>
+        <div class="card"><div class="card-title"><span>实时液相流路图</span><span class="badge b-ready"><span class="b-dot dot-breathe"></span>流路密闭正常</span></div>
+          <div class="flow-row">
+            <div class="flow-node"><div class="hint">流动相储液瓶</div><b class="mono">A${state.inst.pA}% · B${state.inst.pB}%</b><div class="hint">真空脱气中</div></div><span>→</span>
+            <div class="flow-node hi"><div class="hint">四元梯度泵</div><b class="mono">${state.inst.pressure.toFixed(1)} bar</b><div class="hint mono">${state.inst.flow.toFixed(2)} mL/min</div></div><span>→</span>
+            <div class="flow-node"><div class="hint">自动进样器</div><b class="mono">${state.inst.trayTemp.toFixed(1)} °C</b><div class="hint mono">瓶位 ${state.inst.activeVial}</div></div><span>→</span>
+            <div class="flow-node"><div class="hint">柱温箱</div><b class="mono">${state.inst.colTemp.toFixed(1)} °C</b><div class="hint">C18 反相柱</div></div><span>→</span>
+            <div class="flow-node hi"><div class="hint">UV/DAD 检测器</div><b class="mono">${state.inst.wl} nm</b><div class="hint mono">能量 ${state.inst.lampEnergy}%</div></div>
+          </div>
+        </div>`;
+    }
+
+    if (state.view === 'method-catalog') {
+      return `<div class="banner"><div><h1>液相方法目录</h1><p>浏览已验证的 HPLC / UHPLC 方法库，支持一键克隆为新项目。</p></div><button class="btn btn-primary" data-jump="create-project">新建检测项目</button></div>
+        <div class="card"><div class="table-wrap"><table>
+          <thead><tr><th>编号</th><th>方法名称</th><th>色谱柱</th><th>条件</th><th>操作</th></tr></thead>
+          <tbody>${state.projects.map(p=>`<tr>
+            <td class="mono">${esc(p.code)}</td><td><b>${esc(p.displayName)}</b><div class="hint">${esc(p.phaseA)} / ${esc(p.phaseB)}</div></td>
+            <td style="font-size:12px">${esc(p.column)}</td><td class="mono">${p.flow} mL/min · ${p.colTemp}°C · ${p.wl}nm</td>
+            <td><button class="btn btn-sm" data-clone-proj="${p.id}">克隆为新项目</button></td>
+          </tr>`).join('')}</tbody>
+        </table></div></div>`;
+    }
+
+    if (state.view === 'report-formats') {
+      return `<div class="banner"><div><h1>报告格式</h1><p>定制 COA 检测报告版式与导出内容，右侧提供实时预览。</p></div><button class="btn btn-primary" data-toast="已保存报告格式模板">保存模板</button></div>
+        <div class="grid-2">
+          <div class="card" style="margin:0"><div class="card-title"><span>模板选项</span></div>
+            <div class="field"><label class="label">实验室抬头</label><input class="input" value="${esc(state.report.lab)}" data-rep="lab"/></div>
+            <div class="field"><label class="label">导出格式</label><select class="select" data-rep="fmt">${['PDF + CSV','仅加密 PDF','LIMS XML + PDF'].map(f=>`<option ${state.report.fmt===f?'selected':''}>${f}</option>`).join('')}</select></div>
+            <label style="display:flex;gap:8px;margin-top:8px"><input type="checkbox" data-rep-chk="chrom" ${state.report.chrom?'checked':''}/> 附带高分辨率 UV 色谱图</label>
+            <label style="display:flex;gap:8px;margin-top:8px"><input type="checkbox" data-rep-chk="cal" ${state.report.cal?'checked':''}/> 附带标准曲线与 R²</label>
+            <label style="display:flex;gap:8px;margin-top:8px"><input type="checkbox" data-rep-chk="sst" ${state.report.sst?'checked':''}/> 附带系统适配性 (SST) 摘要</label>
+          </div>
+          <div class="card" style="margin:0"><div class="card-title"><span>报告版式实时预览</span><span class="badge b-muted">A4</span></div>
+            <div style="background:var(--cds-surface-1);padding:15px;border-radius:10px;border:1px solid var(--cds-border-subtle);display:flex;flex-direction:column;gap:8px">
+              <div class="hint" style="border-bottom:1px solid var(--cds-border-subtle);padding-bottom:6px">${esc(state.report.lab)}</div>
+              <div class="editorial" style="font-size:16px;font-weight:600">高效液相色谱定量分析报告 (COA)</div>
+              <div class="hint mono">项目：pesticides_test · 波长：254 nm · 导出：${esc(state.report.fmt)}</div>
+              <div style="background:var(--cds-surface-2);border:1px dashed var(--cds-border-strong);border-radius:6px;padding:8px 10px;font-size:12px">定量表：多菌灵 12.45 · 吡虫啉 24.80 · 啶虫脒 9.86 μg/mL</div>
+              ${state.report.chrom ? '<div style="background:var(--cds-surface-2);border:1px dashed var(--cds-border-strong);border-radius:6px;padding:8px 10px;font-size:12px">[ 嵌入式 UV 254 nm 积分色谱图区域 ]</div>' : ''}
+              ${state.report.cal ? '<div style="background:var(--cds-surface-2);border:1px dashed var(--cds-border-strong);border-radius:6px;padding:8px 10px;font-size:12px">[ 校准曲线图 · R² = 0.9998 ]</div>' : ''}
+              ${state.report.sst ? '<div style="background:var(--cds-surface-2);border:1px dashed var(--cds-border-strong);border-radius:6px;padding:8px 10px;font-size:12px">[ SST 校验：N=11,240 · T=1.04 · RSD=0.28% · 合格 ]</div>' : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Remaining setup/manage views: user-profile, processing-params, sharing, archive, features
+    const cfgTitles = {
+      'user-profile': ['用户简介', '操作员身份、锁屏超时与电子签名策略。'],
+      'processing-params': ['处理参数', '默认积分阈值、保留时间识别窗口与校准加权方式。'],
+      'sharing': ['共享与实验室同步', '导出加密检测项目包 (.lcpkg) 或与 LIMS 双向同步。'],
+      'archive': ['归档存档', '检索历史只读色谱归档包与 SHA-256 完整性指纹。'],
+      'features': ['功能与硬件模块', '查看已连接的液相色谱硬件固件与软件授权。']
+    };
+    const [t, desc] = cfgTitles[state.view] || ['系统配置', '液相色谱工作站参数管理。'];
+    return `<div class="banner"><div><h1>${t}</h1><p>${desc}</p></div><button class="btn btn-primary" data-toast="已保存「${t}」设置">保存配置</button></div>
+      <div class="card">
+        ${state.view === 'user-profile' ? `<div class="grid-2">
+          <div class="field"><label class="label">操作员姓名</label><input class="input" value="${esc(state.operator.name)}"/></div>
+          <div class="field"><label class="label">账号 ID</label><input class="input mono" value="${esc(state.operator.id)}"/></div>
+          <div class="field"><label class="label">角色权限</label><select class="select"><option>方法管理员 / QC</option><option>例行分析操作员</option></select></div>
+          <div class="field"><label class="label">自动锁屏 (分钟)</label><input type="number" class="input mono" value="${state.operator.autoLock}"/></div>
+        </div>` : state.view === 'processing-params' ? `<div class="grid-2">
+          <div class="field"><label class="label">最小峰面积 (mAU·s)</label><input type="number" class="input mono" value="${state.procParams.minArea}"/></div>
+          <div class="field"><label class="label">最小峰高 (mAU)</label><input type="number" step="0.1" class="input mono" value="${state.procParams.minHeight}"/></div>
+          <div class="field"><label class="label">保留时间窗口 (± min)</label><input type="number" step="0.01" class="input mono" value="${state.procParams.rtWin}"/></div>
+          <div class="field"><label class="label">校准加权</label><select class="select"><option>1/x 加权线性回归</option><option>1/x² 加权线性回归</option></select></div>
+        </div>` : state.view === 'archive' ? `<div class="table-wrap"><table>
+          <thead><tr><th>归档编号</th><th>关联项目</th><th>批次数</th><th>大小</th><th>SHA-256 指纹</th></tr></thead>
+          <tbody>
+            <tr><td class="mono"><b>ARC-20261119-A</b></td><td class="mono">pesticides_test</td><td class="mono">12 批</td><td class="mono">48.2 MB</td><td class="mono hint">sha256:8f91…c32d</td></tr>
+            <tr><td class="mono"><b>ARC-20261116-B</b></td><td class="mono">analgesic_assay</td><td class="mono">9 批</td><td class="mono">31.7 MB</td><td class="mono hint">sha256:4a12…9e07</td></tr>
+          </tbody>
+        </table></div>` : `<div class="table-wrap"><table>
+          <thead><tr><th>模块 / 服务</th><th>版本 / 地址</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td><b>四元高压梯度泵 (Q-Pump 3000)</b></td><td class="mono">v4.12.0</td><td><span class="badge b-ready">在线 · 就绪</span></td></tr>
+            <tr><td><b>自动进样器 (48/96 位控温)</b></td><td class="mono">v3.8.5</td><td><span class="badge b-ready">15.0 °C 稳定</span></td></tr>
+            <tr><td><b>UV / DAD 二极管阵列检测器</b></td><td class="mono">v5.0.3</td><td><span class="badge b-ready">氘灯已点亮</span></td></tr>
+            <tr><td><b>LIMS 实验室双向同步服务</b></td><td class="mono">lims.lab.internal</td><td><span class="badge b-ready">已连接</span></td></tr>
+          </tbody>
+        </table></div>`}
+      </div>`;
+  }
+
+  function renderModals() {
+    let html = '';
+    if (state.help) {
+      html += `<div class="overlay" data-close-help>
+        <div class="dialog" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:9px"><span class="help-dot" style="opacity:1;width:23px;height:23px">?</span><b>${esc(state.help.title)}</b></div>
+            <button class="btn btn-sm" data-close-help>关闭</button>
+          </div>
+          <p style="margin:0 0 16px;font-size:13.5px;color:var(--cds-text-secondary);line-height:1.65">${esc(state.help.body)}</p>
+          <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" data-close-help>知道了</button></div>
+        </div>
+      </div>`;
+    }
+    if (state.locked) {
+      html += `<div class="overlay">
+        <div class="dialog" style="max-width:370px;text-align:center">
+          <div class="brand-mark" style="width:44px;height:44px;border-radius:12px;margin:0 auto 12px">🔒</div>
+          <h2 class="editorial" style="margin:0 0 6px;font-size:20px">工作站已锁定</h2>
+          <p class="hint" style="margin:0 0 14px">当前液相色谱流路保持安全运行（${state.inst.pressure.toFixed(1)} bar），请输入操作员 PIN 解锁。</p>
+          <div class="field" style="text-align:left"><label class="label">操作员 PIN（演示可直接点击解锁）</label><input id="pin-in" type="password" class="input mono" placeholder="••••"/></div>
+          <button class="btn btn-primary" style="width:100%;height:35px" data-unlock>解锁工作站</button>
+        </div>
+      </div>`;
+    }
+    if (state.toast) {
+      const color = state.toast.type === 'warn' ? 'var(--cds-warning)' : 'var(--cds-success)';
+      html += `<div class="toast"><span class="b-dot" style="background:${color}"></span><span>${esc(state.toast.msg)}</span></div>`;
+    }
+    return html;
+  }
+
+  function render() {
+    document.documentElement.classList.toggle('dark', state.dark);
+    document.getElementById('root').innerHTML = `
+      <div class="shell">
+        ${renderLeftNav()}
+        <div class="workspace-col">
+          ${renderTopBar()}
+          <main class="ws-scroll scroll-fade"><div class="ws-inner">${renderMainView()}</div></main>
+        </div>
+      </div>
+      ${renderModals()}`;
+  }
+
+  // =====================================================================
+  // Simulation Helpers
+  // =====================================================================
+  function startRun() {
+    if (state.running) return;
+    const p = curProj();
+    state.runStep = 3;
+    state.running = true;
+    if (state.runProgress >= p.runTime) state.runProgress = 0;
+    const idx = state.sequence.findIndex(s => s.status === 'ready' || s.status === 'queued');
+    const activeIdx = idx >= 0 ? idx : 2;
+    state.sequence[activeIdx].status = 'running';
+    state.inst.status = 'running';
+    state.inst.statusText = '正在采集';
+    state.inst.wl = p.wl;
+    state.inst.flow = p.flow;
+    state.inst.colTemp = p.colTemp;
+    state.inst.activeVial = state.sequence[activeIdx].vial;
+    playChime('ok');
+    toast(`已启动采集：${p.displayName}`);
+    runTimer = setInterval(() => {
+      state.runProgress = +(state.runProgress + 0.14).toFixed(2);
+      const r = state.runProgress / p.runTime;
+      state.inst.pressure = +(178 + 26 * Math.sin(r * Math.PI) + (Math.random() - 0.5) * 1.1).toFixed(1);
+      if (state.runProgress >= p.runTime) {
+        state.runProgress = p.runTime;
+        stopRun(true, activeIdx);
+      } else {
+        render();
+      }
+    }, 150);
+  }
+
+  function stopRun(done, idx) {
+    clearInterval(runTimer);
+    state.running = false;
+    state.inst.status = 'ready';
+    state.inst.statusText = '仪器就绪';
+    state.inst.pressure = 182.4;
+    if (done && state.sequence[idx]) {
+      state.sequence[idx].status = 'done';
+      if (state.sequence[idx + 1]?.status === 'queued') state.sequence[idx + 1].status = 'ready';
+      playChime('ok');
+      toast(`瓶位 ${state.sequence[idx].vial} 采集完成，谱图已自动保存`);
+    } else {
+      state.runProgress = 0;
+      toast('已中止采集并恢复初始梯度', 'warn');
+    }
+  }
+
+  // =====================================================================
+  // Event Delegation (Click + Input + CJK IME Guard)
+  // =====================================================================
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-help-title],[data-nav],[data-sub],[data-action],[data-top],[data-jump],[data-run],[data-run-step],[data-pick-proj],[data-cstep],[data-grad],[data-grad-del],[data-save-proj],[data-move],[data-toggle-proj],[data-del-ask],[data-del-confirm],[data-del-cancel],[data-sel-peak],[data-approve],[data-sst-run],[data-purge-start],[data-lamp-check],[data-needle-wash],[data-vial],[data-clone-proj],[data-toast],[data-close-help],[data-unlock]');
+    if (!t) return;
+
+    if (t.dataset.helpTitle) {
+      e.stopPropagation();
+      state.help = { title: t.dataset.helpTitle, body: t.dataset.helpBody };
+      return render();
+    }
+    if (t.dataset.closeHelp !== undefined) { state.help = null; return render(); }
+    if (t.dataset.unlock !== undefined) { state.locked = false; playChime('ok'); return toast('欢迎回来，' + state.operator.name); }
+    if (t.dataset.action === 'home') { state.drill = null; state.view = 'home'; state.mobileOpen = false; return render(); }
+    if (t.dataset.action === 'lock') { state.locked = true; playChime('lock'); return render(); }
+    if (t.dataset.action === 'theme') { state.dark = !state.dark; return render(); }
+    if (t.dataset.action === 'mobile-menu') { state.mobileOpen = !state.mobileOpen; return render(); }
+
+    if (t.dataset.nav) {
+      const item = ROOT_GROUPS.flatMap(g => g.items).find(i => i.id === t.dataset.nav);
+      if (item) {
+        state.drill = item.drill || null;
+        if (item.sub) state.sub = item.sub;
+        state.view = item.view;
+        state.mobileOpen = false;
+        render();
+      }
+      return;
+    }
+    if (t.dataset.sub) { state.sub = t.dataset.sub; state.view = 'test-projects'; state.mobileOpen = false; return render(); }
+    if (t.dataset.top) {
+      const id = t.dataset.top;
+      if (id === 'home') { state.drill = null; state.view = 'home'; }
+      else if (id === 'help') { state.help = { title: 'LC-Guide® 操作说明', body: '左侧采用 AB SCIEX Cliquid 风格双层任务导航：点击「检测项目」左侧自动切换为子操作菜单；每个菜单右侧「?」均可查看 SOP 提示；左下角支持浅色温润纸感与暗调护眼模式一键切换。' }; }
+      else if (id === 'lock') { state.locked = true; playChime('lock'); }
+      else { state.drill = null; state.view = id; }
+      return render();
+    }
+    if (t.dataset.jump) {
+      const j = t.dataset.jump;
+      if (j === 'create-project') { state.drill = 'test-projects'; state.sub = 'create-project'; state.view = 'test-projects'; }
+      else { state.drill = null; state.view = j; }
+      return render();
+    }
+    if (t.dataset.run === 'start') return startRun();
+    if (t.dataset.run === 'pause') { clearInterval(runTimer); state.running = false; state.inst.status = 'ready'; state.inst.statusText = '已暂停'; return toast('采集已暂停', 'warn'); }
+    if (t.dataset.run === 'stop') return stopRun(false);
+    if (t.dataset.runStep) { state.runStep = Number(t.dataset.runStep); return render(); }
+    if (t.dataset.pickProj) { state.selProjId = t.dataset.pickProj; return render(); }
+    if (t.dataset.cstep) {
+      const n = Number(t.dataset.cstep);
+      if (n > 1 && !state.draft.name.trim()) return toast('请先为新检测项目提供一个名称', 'warn');
+      state.createStep = n; return render();
+    }
+    if (t.dataset.grad === 'add') {
+      const g = state.draft.gradient;
+      const last = g[g.length - 1] || { t: 0, b: 20 };
+      g.push({ t: +(Number(last.t) + 1).toFixed(1), b: last.b });
+      return render();
+    }
+    if (t.dataset.gradDel !== undefined) {
+      if (state.draft.gradient.length <= 2) return toast('至少保留 2 个梯度节点', 'warn');
+      state.draft.gradient.splice(Number(t.dataset.gradDel), 1);
+      return render();
+    }
+    if (t.dataset.saveProj !== undefined) {
+      const d = state.draft;
+      const maxT = Math.max(...d.gradient.map(g => Number(g.t)||0), 5);
+      const np = {
+        id: 'p' + Date.now(), name: d.name.trim(), displayName: d.displayName.trim() || d.name.trim(),
+        code: d.code, matrix: d.matrix, enabled: true, column: d.col, phaseA: d.phaseA, phaseB: d.phaseB,
+        flow: Number(d.flow)||1, colTemp: Number(d.colTemp)||35, injVol: Number(d.injVol)||10, wl: Number(d.wl)||254,
+        runTime: maxT, updatedAt: '刚刚创建', gradient: d.gradient.map(x=>({...x})),
+        peaks: [
+          { name: '目标峰 A', rt: +(maxT*0.3).toFixed(2), h: 74, w: 0.14, area: 448200, plates: 9820, tail: 1.05, rs: 0, conc: '16.50 μg/mL' },
+          { name: '目标峰 B', rt: +(maxT*0.58).toFixed(2), h: 86, w: 0.15, area: 591300, plates: 12450, tail: 1.04, rs: 6.72, conc: '28.40 μg/mL' }
+        ]
+      };
+      state.projects.unshift(np);
+      state.selProjId = np.id;
+      state.createStep = 1;
+      playChime('ok');
+      return toast(`已成功创建并启用项目「${np.name}」`);
+    }
+    if (t.dataset.move) {
+      const [i, d] = t.dataset.move.split(':').map(Number);
+      const [item] = state.projects.splice(i, 1);
+      state.projects.splice(i + d, 0, item);
+      return toast(`已调整「${item.displayName}」排序`);
+    }
+    if (t.dataset.toggleProj) {
+      const p = state.projects.find(x => x.id === t.dataset.toggleProj);
+      if (p) { p.enabled = !p.enabled; playChime('ok'); toast(p.enabled ? `已启用「${p.displayName}」` : `已撤销「${p.displayName}」`, p.enabled ? 'ok' : 'warn'); }
+      return;
+    }
+    if (t.dataset.delAsk) { state.pendingDelId = t.dataset.delAsk; return render(); }
+    if (t.dataset.delCancel !== undefined) { state.pendingDelId = null; return render(); }
+    if (t.dataset.delConfirm) {
+      if (state.projects.length <= 1) return toast('至少保留 1 个检测项目', 'warn');
+      state.projects = state.projects.filter(x => x.id !== t.dataset.delConfirm);
+      state.pendingDelId = null;
+      return toast('已删除选定检测项目', 'warn');
+    }
+    if (t.dataset.selPeak) { state.selPeakName = t.dataset.selPeak; return render(); }
+    if (t.dataset.approve !== undefined) { state.batchApproved = true; playChime('ok'); return toast('已完成批次定量审核并电子签批'); }
+    if (t.dataset.sstRun !== undefined) {
+      state.sstMetrics[0].val = (10800 + Math.floor(Math.random()*900)).toLocaleString();
+      state.sstMetrics[1].val = (1.02 + Math.random()*0.05).toFixed(2);
+      state.sstMetrics[3].val = (0.21 + Math.random()*0.14).toFixed(2) + '%';
+      state.sstLast = '刚刚验证通过 (6 针对照品)';
+      playChime('ok');
+      return toast('系统适配性测试 (SST) 全部指标合格');
+    }
+    if (t.dataset.purgeStart !== undefined) {
+      if (state.purging) return;
+      state.purging = true; state.purgePct = 10; state.inst.status = 'running'; state.inst.statusText = '流动相排气泡中';
+      render();
+      purgeTimer = setInterval(() => {
+        state.purgePct += 15;
+        if (state.purgePct >= 100) {
+          clearInterval(purgeTimer); state.purgePct = 100; state.purging = false;
+          state.inst.status = 'ready'; state.inst.statusText = '仪器就绪';
+          playChime('ok'); toast('流动相灌注排气泡完成，压力脉动 < 0.3 bar');
+        } else render();
+      }, 220);
+      return;
+    }
+    if (t.dataset.lampCheck !== undefined) { state.lampDiag = '通过 · 波长准确度 +0.1 nm，氘灯能量 94.6%，基线噪声 0.012 mAU'; playChime('ok'); return toast('UV/DAD 光学自检通过'); }
+    if (t.dataset.needleWash !== undefined) { state.needleDiag = '刚刚完成深度清洗 · 残留验证 < 0.005%'; playChime('ok'); return toast('进样针 3 次循环清洗完成'); }
+    if (t.dataset.vial) { state.selVialPos = t.dataset.vial; return render(); }
+    if (t.dataset.cloneProj) {
+      const p = state.projects.find(x => x.id === t.dataset.cloneProj);
+      if (p) { state.projects.unshift({ ...p, id: 'p'+Date.now(), name: p.name+'_copy', displayName: p.displayName+' (副本)', enabled: true, updatedAt: '刚刚克隆' }); playChime('ok'); toast('已从方法库克隆新项目'); }
+      return;
+    }
+    if (t.dataset.toast) { playChime('ok'); return toast(t.dataset.toast); }
+  });
+
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (el.dataset.draft) state.draft[el.dataset.draft] = el.value;
+    if (el.dataset.gt !== undefined) { state.draft.gradient[el.dataset.gt].t = Number(el.value); render(); }
+    if (el.dataset.gb !== undefined) { state.draft.gradient[el.dataset.gb].b = Number(el.value); render(); }
+    if (el.dataset.ep) {
+      const ep = state.projects.find(p => p.id === state.editId);
+      if (ep) ep[el.dataset.ep] = Number(el.value);
+    }
+    if (el.dataset.vialName !== undefined) {
+      const sv = state.vials.find(v => v.pos === state.selVialPos);
+      if (sv) sv.name = el.value;
+    }
+    if (el.dataset.vialVol !== undefined) {
+      const sv = state.vials.find(v => v.pos === state.selVialPos);
+      if (sv) sv.vol = Number(el.value);
+    }
+    if (el.dataset.rep) { state.report[el.dataset.rep] = el.value; render(); }
+  });
+
+  document.addEventListener('change', e => {
+    const el = e.target;
+    if (el.dataset.togglePress !== undefined) { state.showPressure = el.checked; render(); }
+    if (el.dataset.editPick !== undefined) { state.editId = el.value; render(); }
+    if (el.dataset.procProj !== undefined) { state.selProjId = el.value; render(); }
+    if (el.dataset.purgeCh) { state.purgeCh[el.dataset.purgeCh] = el.checked; render(); }
+    if (el.dataset.vialType !== undefined) {
+      const sv = state.vials.find(v => v.pos === state.selVialPos);
+      if (sv) { sv.type = el.value; render(); }
+    }
+    if (el.dataset.repChk) { state.report[el.dataset.repChk] = el.checked; render(); }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.isComposing || e.keyCode === 229) return;
+    if (e.key === 'Escape' && state.help) { state.help = null; render(); }
+    if (e.key === 'Enter' && e.target.id === 'd-name') { e.preventDefault(); state.createStep = 2; render(); }
+    if (e.key === 'Enter' && e.target.id === 'pin-in') { e.preventDefault(); state.locked = false; playChime('ok'); toast('工作站已解锁'); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
